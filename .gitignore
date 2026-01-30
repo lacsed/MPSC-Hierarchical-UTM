@@ -1,0 +1,15 @@
+cat > .gitignore << 'EOF'
+# build/install/log do colcon
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+
+# generated assets
+ros2_ws/src/mpsc_utm_worlds/worlds/generated/
+scripts/gz_world_out/
+EOF
