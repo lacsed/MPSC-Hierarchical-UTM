@@ -23,7 +23,7 @@ ROLE_COLORS = {
     "supplier": (0.0, 1.0, 0.0, 1.0),
     "client": (1.0, 0.5, 0.0, 1.0),
     "charging": (0.0, 0.3, 1.0, 1.0),
-    "building": (0.6, 0.6, 0.6, 1.0),
+    "building": (0.05, 0.05, 0.05, 1.0),
 }
 
 BUILDING_H_MIN = 8.0
@@ -474,11 +474,11 @@ def make_world_sdf(
             lines.append('      </link>')
             lines.append('    </model>')
 
-    def _sphere_model(model_name, x, y, z, rgba):
+    def _sphere_model(model_name, x, y, z, rgba,static="true"):
         """Add a simple sphere marker model."""
         rr, gg, bb, aa = rgba
         lines.append(f'    <model name="{model_name}">')
-        lines.append('      <static>true</static>')
+        lines.append(f'      <static>{static}</static>')
         lines.append(f'      <pose>{x:.3f} {y:.3f} {z:.3f} 0 0 0</pose>')
         lines.append('      <link name="link">')
         lines.append('        <collision name="collision">')
@@ -500,7 +500,14 @@ def make_world_sdf(
 
     if vehicle_markers:
         for name, x, y, z in vehicle_markers:
-            _sphere_model(name, x, y, z, (1.0, 0.0, 1.0, 1.0))
+            _sphere_model(name, x, y, z, (1.0, 0.0, 1.0, 1.0),"false")
+
+
+    lines.append('    <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so">')
+    lines.append('      <ros>')
+    lines.append('        <namespace>gazebo</namespace>')
+    lines.append('      </ros>')
+    lines.append('    </plugin>')
 
     lines.append('  </world>')
     lines.append('</sdf>')

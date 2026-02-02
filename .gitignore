@@ -1,15 +1,79 @@
-cat > .gitignore << 'EOF'
-# build/install/log do colcon
+# ============================================================
+# ROS 2 / colcon (generated build artifacts)
+# ============================================================
 ros2_ws/build/
 ros2_ws/install/
 ros2_ws/log/
 
-# python
-__pycache__/
-*.pyc
-.venv/
+# If you ever build outside ros2_ws
+build/
+install/
+log/
 
-# generated assets
-ros2_ws/src/mpsc_utm_worlds/worlds/generated/
-scripts/gz_world_out/
-EOF
+# ============================================================
+# Python (bytecode, caches, venvs)
+# ============================================================
+__pycache__/
+*.py[cod]
+*$py.class
+
+.venv/
+venv/
+env/
+ENV/
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# ============================================================
+# Editors / IDEs
+# ============================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ============================================================
+# OS junk
+# ============================================================
+.DS_Store
+Thumbs.db
+
+# ============================================================
+# Gazebo / simulation runtime junk inside repo
+# (only patterns that could appear INSIDE the repo)
+# ============================================================
+**/*.log
+**/*.log.*
+**/*.core
+core
+core.*
+**/gazebo_logs/
+**/logs/
+**/*.bag
+**/*.bag.active
+**/*.bag.metadata.yaml
+
+# ============================================================
+# Generated simulation outputs (keep world + graph, ignore debug)
+# ============================================================
+# We KEEP:
+# - scripts/gz_world_out/utm_world.sdf
+# - scripts/gz_world_out/graph_nodes.csv
+# - scripts/gz_world_out/graph_edges.csv
+# - scripts/gz_world_out/materials/**
+# - scripts/gz_world_out/*.png needed by world/materials (finalmap.png, heightmap.png, masks)
+
+# Ignore only debug visuals that are safe to regenerate
+scripts/gz_world_out/graph_debug*.png
+
+# ============================================================
+# Media outputs
+# ============================================================
+*.mp4
+*.avi
+*.mov
