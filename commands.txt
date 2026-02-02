@@ -1,0 +1,53 @@
+
+generate world:
+python3 gen_world_from_image_gz.py 6 1 1 2 4 --map ./assets/finalmap.png --out gz_world_out --res 0.2 --seed 77
+
+launching world
+ros2 launch gazebo_ros gazebo.launch.py world:=/home/mploures/MPSC-Hierarchical-UTM/scripts/gz_world_out/utm_world.sdf
+
+finishes gazebo
+pkill -f gzserver || true
+pkill -f gzclient || true
+pkill -f gazebo   || true
+
+
+# Terminal 1
+
+## Go to the generated world directory (required for relative file:// paths)
+cd ~/MPSC-Hierarchical-UTM/scripts/gz_world_out
+
+## Load Gazebo Classic environment (sets default resource paths, shaders, etc.)
+source /usr/share/gazebo-11/setup.sh 2>/dev/null || true
+
+## Prepend your world folder to Gazebo paths (guarantees textures/materials resolve)
+export GAZEBO_MODEL_PATH="$PWD:${GAZEBO_MODEL_PATH}"
+export GAZEBO_RESOURCE_PATH="$PWD:${GAZEBO_RESOURCE_PATH}"
+
+## Ensure Gazebo can find ROS2 Gazebo plugins
+export GAZEBO_PLUGIN_PATH="/opt/ros/galactic/lib:${GAZEBO_PLUGIN_PATH}"
+
+## Load ROS 2 environment
+cd ~/MPSC-Hierarchical-UTM/ros2_ws
+defros2
+source install/setup.bash
+
+## Launch Gazebo with ROS integration using the absolute world path
+ros2 launch gazebo_ros gazebo.launch.py \
+  world:=/home/mploures/MPSC-Hierarchical-UTM/scripts/gz_world_out/utm_world.sdf
+
+
+# Terminal 2
+
+##Load ROS 2 workspace environment
+cd ~/MPSC-Hierarchical-UTM/ros2_ws
+defros2
+source install/setup.bash
+
+## Run the fleet demo using the generated graph files
+ros2 run utm_fleet utm_fleet_demo \
+  --nodes /home/mploures/MPSC-Hierarchical-UTM/scripts/gz_world_out/graph_nodes.csv \
+  --edges /home/mploures/MPSC-Hierarchical-UTM/scripts/gz_world_out/graph_edges.csv \
+  --rate 10 \
+  --speed 4.0 \
+  --tol 0.7 \
+  --set-service /gazebo/set_entity_state
