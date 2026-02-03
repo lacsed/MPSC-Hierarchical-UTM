@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# graph2d.py
+
 
 import math
-import os
 import random
 from collections import defaultdict
 
@@ -13,17 +12,11 @@ import numpy as np
 from city_gen import point_in_any_box, seg_hits_any_box
 
 
-# -----------------------------
-# Tunables (may be overwritten by importer)
-# -----------------------------
-
 K_SPECIAL = 1
 
 LOGICAL_MAX_DEG = 4
 LOGICAL_LL_TARGET = 2
-LOGICAL_SL_CAP = LOGICAL_MAX_DEG - LOGICAL_LL_TARGET  
- 
-
+LOGICAL_SL_CAP = LOGICAL_MAX_DEG - LOGICAL_LL_TARGET
 
 TRI_MIN_AREA_PX2 = 1200.0
 
@@ -38,11 +31,6 @@ KNN_LOCAL = 32
 MAX_OUT_EDGES = 16
 
 
-
-# -----------------------------
-# Globals / cache
-# -----------------------------
-
 _GLOBAL_POS_SKEL = None
 _GLOBAL_CENTER_PX = None
 
@@ -55,7 +43,6 @@ _TRIANGLES = None
 _LOGICAL_SIDS = None
 _LOGICAL_POS = None
 _LOGICAL_TRI = None
-_TRI_KEY_TO_LOGICAL = None
 _SPECIAL_TO_LOGICALS = None
 
 _LAST_STATE = None
@@ -76,10 +63,6 @@ def _px(sid):
     _ensure_logical_globals()
     return _GLOBAL_POS_SKEL[sid]
 
-
-# -----------------------------
-# Geometry
-# -----------------------------
 
 def _clamp(v, lo, hi):
     return lo if v < lo else hi if v > hi else v
@@ -106,7 +89,9 @@ def _dist(a, b):
 
 
 def _orient(a, b, c):
-    return (float(b[0]) - float(a[0])) * (float(c[1]) - float(a[1])) - (float(b[1]) - float(a[1])) * (float(c[0]) - float(a[0]))
+    return (float(b[0]) - float(a[0])) * (float(c[1]) - float(a[1])) - (float(b[1]) - float(a[1])) * (
+        float(c[0]) - float(a[0])
+    )
 
 
 def _points_equal(p, q, eps=POINT_EPS):
@@ -254,36 +239,27 @@ def _seg_bbox(a, b):
 def _segment_crosses_triangle_interior(a, b, tri):
     (A, B, C) = tri
     shared = (
-        _points_equal(a, A) or _points_equal(a, B) or _points_equal(a, C)
-        or _points_equal(b, A) or _points_equal(b, B) or _points_equal(b, C)
+        _points_equal(a, A)
+        or _points_equal(a, B)
+        or _points_equal(a, C)
+        or _points_equal(b, A)
+        or _points_equal(b, B)
+        or _points_equal(b, C)
     )
 
     mid = ((a[0] + b[0]) * 0.5, (a[1] + b[1]) * 0.5)
     if _point_in_tri_strict(mid, A, B, C):
         return True
 
-    if _segments_intersect_or_touch(a, b, A, B) or _segments_intersect_or_touch(a, b, B, C) or _segments_intersect_or_touch(a, b, C, A):
+    if (
+        _segments_intersect_or_touch(a, b, A, B)
+        or _segments_intersect_or_touch(a, b, B, C)
+        or _segments_intersect_or_touch(a, b, C, A)
+    ):
         if not shared:
             return True
     return False
 
-
-def _circumradius(tri):
-    (A, B, C) = tri
-    a = _dist(B, C)
-    b = _dist(A, C)
-    c = _dist(A, B)
-    area2 = _triangle_area2(A, B, C)
-    if area2 <= 1e-12:
-        return 0.0
-    area = 0.5 * area2
-    R = (a * b * c) / (4.0 * area)
-    return float(R)
-
-
-# -----------------------------
-# Spatial indices
-# -----------------------------
 
 class _GridIndex:
     def __init__(self, cell_size):
@@ -338,7 +314,7 @@ class _SegmentIndex:
 
     def candidates(self, a, b):
         a = (float(a[0]), float(a[1]))
-        b = (float(b[0]), float(b[1]))  # fixed
+        b = (float(b[0]), float(b[1]))
         seen = set()
         for c in self._cells_for_seg(a, b):
             for sid in self.grid.get(c, []):
@@ -383,12 +359,11 @@ class _TriIndex:
         return self.tris[tid]
 
 
-# -----------------------------
-# Segment validity
-# -----------------------------
-
 def _segment_ok(
-    a, b, u, v,
+    a,
+    b,
+    u,
+    v,
     seg_index,
     boxes,
     ignore_boxes=None,
@@ -442,10 +417,6 @@ def _segment_ok(
     return True
 
 
-# -----------------------------
-# Triangulation (left-to-right)
-# -----------------------------
-
 def _cache_key(specials, boxes, allow_overflight, seed):
     s = tuple(sorted((str(sp["id"]), round(float(sp["px"]), 3), round(float(sp["py"]), 3)) for sp in specials))
     b = tuple((int(round(x)), int(round(y)), int(round(w)), int(round(h))) for (_a, x, y, w, h) in boxes)
@@ -478,7 +449,9 @@ def _min_dist_to_points(p, pts):
 
 def _pick_centroid_or_near(tri, boxes, specials_pts, rnd, tries=32):
     c = _centroid(tri)
-    if (not boxes or not point_in_any_box(c, boxes, ignore_indices=set())) and _min_dist_to_points(c, specials_pts) >= MIN_LOGICAL_TO_SPECIAL_PX:
+    if (not boxes or not point_in_any_box(c, boxes, ignore_indices=set())) and _min_dist_to_points(
+        c, specials_pts
+    ) >= MIN_LOGICAL_TO_SPECIAL_PX:
         return (float(c[0]), float(c[1]))
     A, B, C = tri
     best = c
@@ -548,7 +521,11 @@ def _build_triangles_left_to_right(specials, boxes, allow_overflight=False, seed
             ignore.add(bi[b])
 
         ok = _segment_ok(
-            P, Q, a, b, seg_index,
+            P,
+            Q,
+            a,
+            b,
+            seg_index,
             boxes=[] if allow_overflight else boxes,
             ignore_boxes=ignore,
             min_pt_clear=MIN_PT_CLEAR_PX,
@@ -634,7 +611,7 @@ def _build_triangles_left_to_right(specials, boxes, allow_overflight=False, seed
                     break
                 PA = pos[A]
 
-                rest = ids[i + 1:]
+                rest = ids[i + 1 :]
                 if len(rest) < 2:
                     continue
 
@@ -669,13 +646,11 @@ def _build_triangles_left_to_right(specials, boxes, allow_overflight=False, seed
                         seen_tris.add(tk)
 
     triangles.sort(key=lambda it: it[4])
-    forbid_tris = [it[3] for it in triangles]
-    return triangles, forbid_tris
+    return triangles, []
 
 
 def _ensure_triangles_and_logicals(specials, pos_skel, boxes, allow_overflight=False, seed=0):
-    global _CACHE_KEY, _TRIANGLES, _FORBID_TRIS, _LOGICAL_SIDS, _LOGICAL_POS, _LOGICAL_TRI
-    global _TRI_KEY_TO_LOGICAL, _SPECIAL_TO_LOGICALS
+    global _CACHE_KEY, _TRIANGLES, _LOGICAL_SIDS, _LOGICAL_POS, _LOGICAL_TRI, _SPECIAL_TO_LOGICALS
 
     key = _cache_key(specials, boxes, allow_overflight, seed)
     if _CACHE_KEY == key and _LOGICAL_SIDS is not None and _TRIANGLES is not None:
@@ -683,7 +658,7 @@ def _ensure_triangles_and_logicals(specials, pos_skel, boxes, allow_overflight=F
 
     _CACHE_KEY = key
 
-    tris, forbid = _build_triangles_left_to_right(
+    tris, _unused = _build_triangles_left_to_right(
         specials,
         boxes=boxes,
         allow_overflight=bool(allow_overflight),
@@ -691,7 +666,6 @@ def _ensure_triangles_and_logicals(specials, pos_skel, boxes, allow_overflight=F
     )
 
     _TRIANGLES = tris
-    _FORBID_TRIS = forbid
 
     specials_pts = [(float(sp["px"]), float(sp["py"])) for sp in specials]
     rnd = random.Random(seed)
@@ -702,12 +676,7 @@ def _ensure_triangles_and_logicals(specials, pos_skel, boxes, allow_overflight=F
     _LOGICAL_SIDS = []
     _LOGICAL_POS = {}
     _LOGICAL_TRI = {}
-    _TRI_KEY_TO_LOGICAL = {}
     _SPECIAL_TO_LOGICALS = defaultdict(list)
-
-    def tri_key(A, B, C):
-        ss = sorted([str(A), str(B), str(C)])
-        return tuple(ss)
 
     for (A_id, B_id, C_id, tri, _a2) in (_TRIANGLES or []):
         c = _centroid(tri)
@@ -722,17 +691,10 @@ def _ensure_triangles_and_logicals(specials, pos_skel, boxes, allow_overflight=F
         _LOGICAL_TRI[sid] = tri
         pos_skel[sid] = _LOGICAL_POS[sid]
 
-        tk = tri_key(A_id, B_id, C_id)
-        _TRI_KEY_TO_LOGICAL[tk] = sid
-
         _SPECIAL_TO_LOGICALS[A_id].append(sid)
         _SPECIAL_TO_LOGICALS[B_id].append(sid)
         _SPECIAL_TO_LOGICALS[C_id].append(sid)
 
-
-# -----------------------------
-# Debug (triangles)
-# -----------------------------
 
 def save_triangles_debug_png(out_path, map_bgr, boxes, specials):
     img = map_bgr.copy()
@@ -764,10 +726,6 @@ def debug_build_and_save_triangles_png(out_path, map_bgr, boxes, specials, pos_s
     return list(_TRIANGLES or []), list(_LOGICAL_SIDS or [])
 
 
-# -----------------------------
-# Visibility candidates
-# -----------------------------
-
 def build_visibility_candidates_for_specials(
     specials,
     candidate_logical_sids,
@@ -782,6 +740,7 @@ def build_visibility_candidates_for_specials(
     _ensure_logical_globals()
     _ensure_triangles_and_logicals(specials, pos_skel, boxes, allow_overflight=allow_overflight, seed=0)
 
+    _ = candidate_logical_sids
     logical_sids = list(_LOGICAL_SIDS) if _LOGICAL_SIDS else []
     allowed = {}
 
@@ -790,12 +749,7 @@ def build_visibility_candidates_for_specials(
         S = (float(sp["px"]), float(sp["py"]))
 
         lst = list(_SPECIAL_TO_LOGICALS.get(s_id, [])) if _SPECIAL_TO_LOGICALS else []
-        lst2 = []
-        for sid in lst:
-            P = (float(pos_skel[sid][0]), float(pos_skel[sid][1]))
-            lst2.append(sid)
-
-        if not lst2:
+        if not lst:
             if logical_sids:
                 sid0 = min(logical_sids, key=lambda sid: _dist(S, pos_skel[sid]))
                 allowed[s_id] = [sid0]
@@ -803,15 +757,10 @@ def build_visibility_candidates_for_specials(
                 allowed[s_id] = []
             continue
 
-        lst2 = sorted(lst2, key=lambda sid: _dist(S, pos_skel[sid]))
-        allowed[s_id] = lst2 
+        allowed[s_id] = sorted(lst, key=lambda sid: _dist(S, pos_skel[sid]))
 
     return allowed
 
-
-# -----------------------------
-# Logical selection (minimize #logical <= max_nodes)
-# -----------------------------
 
 def greedy_select_logical_nodes_randomized(special_ids, allowed_by_special, max_nodes, seed_local=0):
     all_cands = []
@@ -822,16 +771,17 @@ def greedy_select_logical_nodes_randomized(special_ids, allowed_by_special, max_
                 seen.add(c)
                 all_cands.append(c)
 
-    all_cands = sorted(all_cands)
     if not all_cands:
         return None
-    
+
+    rnd = random.Random(int(seed_local))
+    rnd.shuffle(all_cands)
+
+    if max_nodes is not None and int(max_nodes) > 0:
+        all_cands = all_cands[: int(max_nodes)]
+
     return all_cands
 
-
-# -----------------------------
-# Special assignment (triangle -> logical center)
-# -----------------------------
 
 def assign_special_edges_balanced(
     specials,
@@ -844,6 +794,9 @@ def assign_special_edges_balanced(
 ):
     global _LAST_STATE
     _ensure_logical_globals()
+
+    _ = seed
+    _ = tries
 
     sp_pos = {sp["id"]: (float(sp["px"]), float(sp["py"])) for sp in specials}
     special_ids = [sp["id"] for sp in specials]
@@ -860,16 +813,28 @@ def assign_special_edges_balanced(
 
     pts = [(sid, _px(sid)) for sid in (logical_sids_selected or [])] + [(s, sp_pos[s]) for s in special_ids]
 
-    for lsid in (logical_sids_selected or []):
+    s_allowed = {}
+    if allowed_by_special_sid:
+        for s in special_ids:
+            s_allowed[s] = set(allowed_by_special_sid.get(s, []))
+    else:
+        for s in special_ids:
+            s_allowed[s] = None
+
+    logical_list = list(logical_sids_selected or [])
+    lidx = {sid: i for i, sid in enumerate(logical_list)}
+
+    cap_sl = int(max(0, int(max_deg_total) - int(reserve_ll)))
+    deg_sl = [0] * len(logical_list)
+
+    for lsid in logical_list:
         tri = _LOGICAL_TRI.get(lsid, None)
         if tri is None:
             continue
 
         A, B, C = tri
-        verts = [A, B, C]
-
         vert_specials = []
-        for vtx in verts:
+        for vtx in (A, B, C):
             best = None
             best_d = 1e18
             for sid_s in special_ids:
@@ -881,6 +846,17 @@ def assign_special_edges_balanced(
                 vert_specials.append(best)
 
         for sid_s in vert_specials:
+            if K_SPECIAL > 0 and len(assignment[sid_s]) >= int(K_SPECIAL):
+                continue
+
+            allow_set = s_allowed.get(sid_s)
+            if allow_set is not None and lsid not in allow_set:
+                continue
+
+            li = lidx[lsid]
+            if cap_sl > 0 and deg_sl[li] >= cap_sl:
+                continue
+
             P = sp_pos[sid_s]
             Q = _px(lsid)
 
@@ -895,7 +871,10 @@ def assign_special_edges_balanced(
                     ignore = {bi}
 
             ok = _segment_ok(
-                P, Q, sid_s, lsid,
+                P,
+                Q,
+                sid_s,
+                lsid,
                 seg_index=segi,
                 boxes=[] if allow_overflight else boxes,
                 ignore_boxes=ignore,
@@ -909,25 +888,23 @@ def assign_special_edges_balanced(
 
             segi.add(("SL", sid_s, lsid), P, Q, sid_s, lsid)
             assignment[sid_s].append(lsid)
+            deg_sl[li] += 1
 
     assignment = {k: tuple(v) for k, v in assignment.items()}
 
     _LAST_STATE["ll_edges"] = []
     _LAST_STATE["seg_index"] = segi
     _LAST_STATE["assignment"] = dict(assignment)
-    _LAST_STATE["logical_sids"] = list(logical_sids_selected or [])
+    _LAST_STATE["logical_sids"] = list(logical_list)
 
-    deg = [0] * len(list(logical_sids_selected or []))
-    return assignment, deg
+    return assignment, deg_sl
 
-
-# -----------------------------
-# Logical-logical edges (add all feasible, no crossings, clearance)
-# -----------------------------
 
 def build_ll_tree_from_caps(ll_caps=None, seed=0):
     global _LAST_STATE
     _ensure_logical_globals()
+
+    _ = seed
 
     sel = []
     if _LAST_STATE and "logical_sids" in _LAST_STATE:
@@ -945,7 +922,11 @@ def build_ll_tree_from_caps(ll_caps=None, seed=0):
     boxes = _GLOBAL_BOXES if _GLOBAL_BOXES is not None else []
     allow_overflight = bool(_GLOBAL_ALLOW_OVERFLIGHT)
 
-    segi = _LAST_STATE["seg_index"] if (_LAST_STATE and "seg_index" in _LAST_STATE) else _SegmentIndex(cell_size=max(24.0, MIN_EDGE_CLEAR_PX))
+    segi = (
+        _LAST_STATE["seg_index"]
+        if (_LAST_STATE and "seg_index" in _LAST_STATE)
+        else _SegmentIndex(cell_size=max(24.0, MIN_EDGE_CLEAR_PX))
+    )
 
     pts = [(sid, _px(sid)) for sid in sids]
     if _LAST_STATE and "specials" in _LAST_STATE:
@@ -960,11 +941,28 @@ def build_ll_tree_from_caps(ll_caps=None, seed=0):
             pairs.append((_dist(_px(u), _px(v)), u, v))
     pairs.sort(key=lambda t: (t[0], str(t[1]), str(t[2])))
 
+    if ll_caps is None:
+        rem = [10**9] * len(sids)
+    else:
+        rem = [int(x) for x in ll_caps]
+        if len(rem) < len(sids):
+            rem += [0] * (len(sids) - len(rem))
+
+    idx = {sid: i for i, sid in enumerate(sids)}
     edges = []
+
     for _d, u, v in pairs:
+        iu = idx[u]
+        iv = idx[v]
+        if rem[iu] <= 0 or rem[iv] <= 0:
+            continue
+
         a, b = _px(u), _px(v)
         ok = _segment_ok(
-            a, b, u, v,
+            a,
+            b,
+            u,
+            v,
             seg_index=segi,
             boxes=[] if allow_overflight else boxes,
             ignore_boxes=set(),
@@ -975,20 +973,18 @@ def build_ll_tree_from_caps(ll_caps=None, seed=0):
         )
         if not ok:
             continue
+
         segi.add(("LL", u, v), a, b, u, v)
         edges.append((u, v))
+        rem[iu] -= 1
+        rem[iv] -= 1
 
     _LAST_STATE["ll_edges"] = list(edges)
     _LAST_STATE["seg_index"] = segi
     _LAST_STATE["logical_sids"] = list(sids)
 
-    idx = {sid: i for i, sid in enumerate(sids)}
     return [(idx[u], idx[v]) for (u, v) in edges if u in idx and v in idx]
 
-
-# -----------------------------
-# Optional refine hook 
-# -----------------------------
 
 def refine_logical_positions_only(
     specials,
@@ -1003,36 +999,32 @@ def refine_logical_positions_only(
 ):
     _ensure_logical_globals()
 
-    # --- tunables (px) ---
-    R = float(MIN_PT_CLEAR_PX)          # clearance from special to any segment
+    _ = resolution_m_per_px
+
+    R = float(MIN_PT_CLEAR_PX)
     R2 = R * R
-    MAX_PASSES = 6                      # greedy sweeps over all logicals
+    MAX_PASSES = 6
     EPS = 1e-6
 
     sids = list(selected_sids or [])
     if not sids:
         return {}
 
-    # logical positions (mutable)
     pos = {sid: (float(_px(sid)[0]), float(_px(sid)[1])) for sid in sids}
 
-    # specials
     sp_ids = [sp["id"] for sp in (specials or [])]
     sp_pos = {sp["id"]: (float(sp["px"]), float(sp["py"])) for sp in (specials or [])}
 
     rng = random.Random(seed)
 
-    # build incident segments for each logical sid (end at logical)
     incident = {l: [] for l in sids}
 
-    # SL edges from assignment_by_special: segment (S -> L)
     if assignment_by_special:
         for s in sp_ids:
             for l in assignment_by_special.get(s, ()):
                 if l in incident and s in sp_pos:
                     incident[l].append(("SL", s))
 
-    # LL edges from ll_tree_edges indices: segment (Lj -> Li)
     if ll_tree_edges:
         for (i, j) in ll_tree_edges:
             if 0 <= i < len(sids) and 0 <= j < len(sids):
@@ -1058,7 +1050,6 @@ def refine_logical_positions_only(
         return x, y
 
     def closest_point_on_seg(P, A, B):
-        # returns (C, t) where C = A + t(B-A), t in [0,1]
         ax, ay = A
         bx, by = B
         px, py = P
@@ -1079,7 +1070,6 @@ def refine_logical_positions_only(
         return (cx, cy), t
 
     def push_logical_for_violation(L, A, B, P):
-        # Move only B (= logical) so that dist(P, seg(A,B)) == R
         C, t = closest_point_on_seg(P, A, B)
         dx = C[0] - P[0]
         dy = C[1] - P[1]
@@ -1092,8 +1082,6 @@ def refine_logical_positions_only(
         ny = dy / d
         need = (R - d)
 
-        # Greedy shift: move endpoint B along normal away from P
-        # scale by (1/(t+eps)) so interior closest-point reacts faster
         gain = 1.0 / max(EPS, t)
         sx = nx * need * gain
         sy = ny * need * gain
@@ -1102,7 +1090,6 @@ def refine_logical_positions_only(
         nbx, nby = nudge_out_of_boxes(nbx, nby)
         return (nbx, nby), True
 
-    # greedy passes
     for _pass in range(MAX_PASSES):
         moved_any = False
 
@@ -1110,21 +1097,19 @@ def refine_logical_positions_only(
             lx, ly = pos[L]
 
             for kind, other in incident.get(L, []):
-                # segment endpoints: A (fixed), B (logical)
                 if kind == "SL":
                     s = other
                     A = sp_pos[s]
                     B = (lx, ly)
                     end_u = s
                     end_v = L
-                else:  # LL
+                else:
                     Lj = other
                     A = pos[Lj]
                     B = (lx, ly)
                     end_u = Lj
                     end_v = L
 
-                # check all specials except endpoints
                 for sp_id in sp_ids:
                     if sp_id == end_u or sp_id == end_v:
                         continue
@@ -1136,18 +1121,16 @@ def refine_logical_positions_only(
                     if (ddx * ddx + ddy * ddy) >= R2:
                         continue
 
-                    # fix this violation immediately
                     newB, moved = push_logical_for_violation(L, A, B, P)
                     if moved:
                         lx, ly = newB
                         pos[L] = (lx, ly)
                         moved_any = True
-                        B = (lx, ly)  # update segment for next checks
+                        B = (lx, ly)
 
         if not moved_any:
             break
 
-    # write back
     out = {}
     for sid in sids:
         out[sid] = pos[sid]
@@ -1157,10 +1140,6 @@ def refine_logical_positions_only(
 
     return out
 
-
-# -----------------------------
-# Road skeleton (unchanged)
-# -----------------------------
 
 def _zs_thin(bin01):
     img = (bin01 > 0).astype(np.uint8).copy()
@@ -1220,8 +1199,16 @@ def skeletonize_roads(mask_roads_255):
 
 
 def _nbrs8_coords(x, y):
-    return [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1), (x - 1, y), (x + 1, y),
-            (x - 1, y + 1), (x, y + 1), (x + 1, y + 1)]
+    return [
+        (x - 1, y - 1),
+        (x, y - 1),
+        (x + 1, y - 1),
+        (x - 1, y),
+        (x + 1, y),
+        (x - 1, y + 1),
+        (x, y + 1),
+        (x + 1, y + 1),
+    ]
 
 
 def classify_skel_node(skel01, x, y):
@@ -1294,10 +1281,6 @@ def build_skeleton_graph(skel01):
 
     return adj, pos
 
-
-# -----------------------------
-# Debug image (final graph)
-# -----------------------------
 
 def save_graph_debug_png(
     out_path,
