@@ -73,8 +73,18 @@ def main(
 
     label_map, min_dist = city.segment_by_palette(img)
     mask_building, mask_roads = city.build_masks(label_map, min_dist, building_tol=12.0, road_tol=18.0)
+    mask_park = city.build_park_mask(label_map, min_dist, park_tol=18.0)
+    cv2.imwrite(os.path.join(out_dir, "mask_park.png"), mask_park)
     cv2.imwrite(os.path.join(out_dir, "mask_building.png"), mask_building)
     cv2.imwrite(os.path.join(out_dir, "mask_roads.png"), mask_roads)
+
+    park_models = city.plan_park_models(
+        mask_park,
+        W_px=W,
+        H_px=H,
+        resolution_m_per_px=resolution_m_per_px,
+        seed=seed,
+    )
 
     boxes = city.extract_building_boxes(
         img_bgr=img,
@@ -164,7 +174,6 @@ def main(
         candidate_logical_sids=candidate_logical_sids,
         pos_skel=pos_skel,
         boxes=boxes,
-        max_candidates_per_special=max_candidates_per_special,
         allow_overflight=allow_overflight,
     )
     for s in special_ids:
@@ -343,6 +352,8 @@ def main(
         seed=seed,
         logical_markers=logical_markers if spawn_markers else None,
         vehicle_markers=vehicle_markers if spawn_markers else None,
+        park_models=park_models,
+        vehicle_model_uri="model://quadrotor",
     )
     sdf_path = os.path.join(out_dir, "utm_world.sdf")
     with open(sdf_path, "w", encoding="utf-8") as f:

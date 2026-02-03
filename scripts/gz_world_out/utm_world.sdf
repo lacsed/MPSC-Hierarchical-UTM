@@ -13,7 +13,7 @@
     </scene>
     <model name="map_ground">
       <static>true</static>
-      <pose>0 0 0 0 0 0</pose>
+      <pose>0 0 0.000 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
@@ -42,6 +42,1272 @@
         </visual>
       </link>
     </model>
+    <include>
+      <uri>model://gazebo</uri>
+      <name>PARK_GAZEBO</name>
+      <pose>32.580 -6.847 0.020 0.000 0.000 0.000</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00000</name>
+      <pose>20.300 6.500 0.020 0.000 0.000 -3.127</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00001</name>
+      <pose>18.700 7.100 0.020 0.000 0.000 0.756</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00002</name>
+      <pose>16.300 3.500 0.020 0.000 0.000 -1.802</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00003</name>
+      <pose>19.500 8.100 0.020 0.000 0.000 -0.865</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00004</name>
+      <pose>20.300 4.100 0.020 0.000 0.000 3.082</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00005</name>
+      <pose>23.100 3.700 0.020 0.000 0.000 -3.092</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00006</name>
+      <pose>23.700 5.100 0.020 0.000 0.000 -0.490</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00007</name>
+      <pose>21.100 6.100 0.020 0.000 0.000 2.974</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00008</name>
+      <pose>21.700 7.300 0.020 0.000 0.000 2.444</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00009</name>
+      <pose>23.900 7.100 0.020 0.000 0.000 2.241</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00010</name>
+      <pose>27.900 7.900 0.020 0.000 0.000 -1.173</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00011</name>
+      <pose>26.500 7.300 0.020 0.000 0.000 -0.056</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00012</name>
+      <pose>27.500 5.700 0.020 0.000 0.000 -3.129</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00013</name>
+      <pose>29.500 6.900 0.020 0.000 0.000 1.704</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00014</name>
+      <pose>26.900 4.300 0.020 0.000 0.000 -0.057</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00015</name>
+      <pose>31.500 6.300 0.020 0.000 0.000 1.266</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00016</name>
+      <pose>33.100 8.100 0.020 0.000 0.000 0.032</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00017</name>
+      <pose>30.300 7.900 0.020 0.000 0.000 -0.064</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00018</name>
+      <pose>34.300 5.700 0.020 0.000 0.000 -0.203</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00019</name>
+      <pose>33.100 6.700 0.020 0.000 0.000 -1.335</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00020</name>
+      <pose>36.100 5.900 0.020 0.000 0.000 -2.284</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00021</name>
+      <pose>37.700 5.900 0.020 0.000 0.000 -1.865</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00022</name>
+      <pose>35.900 4.100 0.020 0.000 0.000 1.086</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00023</name>
+      <pose>38.500 4.700 0.020 0.000 0.000 -2.912</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00024</name>
+      <pose>36.700 7.100 0.020 0.000 0.000 -2.531</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00025</name>
+      <pose>40.900 6.900 0.020 0.000 0.000 0.609</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00026</name>
+      <pose>42.100 3.500 0.020 0.000 0.000 2.092</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00027</name>
+      <pose>44.300 7.500 0.020 0.000 0.000 0.759</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00028</name>
+      <pose>42.900 5.700 0.020 0.000 0.000 -0.943</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00029</name>
+      <pose>41.100 5.300 0.020 0.000 0.000 2.795</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00030</name>
+      <pose>45.900 3.700 0.020 0.000 0.000 -2.055</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00031</name>
+      <pose>48.300 7.900 0.020 0.000 0.000 1.685</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00032</name>
+      <pose>46.900 7.500 0.020 0.000 0.000 0.337</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00033</name>
+      <pose>48.500 6.700 0.020 0.000 0.000 2.868</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00034</name>
+      <pose>45.700 5.300 0.020 0.000 0.000 -1.606</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00035</name>
+      <pose>20.300 -0.900 0.020 0.000 0.000 -1.558</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00036</name>
+      <pose>17.900 3.300 0.020 0.000 0.000 0.697</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00037</name>
+      <pose>17.700 -1.100 0.020 0.000 0.000 -1.080</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00038</name>
+      <pose>16.500 -0.900 0.020 0.000 0.000 -0.640</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00039</name>
+      <pose>19.100 0.300 0.020 0.000 0.000 2.772</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00040</name>
+      <pose>23.700 3.300 0.020 0.000 0.000 -1.476</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00041</name>
+      <pose>22.900 0.100 0.020 0.000 0.000 -2.074</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00042</name>
+      <pose>24.700 -0.700 0.020 0.000 0.000 2.855</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00043</name>
+      <pose>23.900 0.900 0.020 0.000 0.000 1.473</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00044</name>
+      <pose>22.500 -1.100 0.020 0.000 0.000 2.276</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00045</name>
+      <pose>28.300 -0.700 0.020 0.000 0.000 2.511</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00046</name>
+      <pose>28.100 2.900 0.020 0.000 0.000 0.708</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00047</name>
+      <pose>26.700 -0.900 0.020 0.000 0.000 0.747</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00048</name>
+      <pose>29.300 3.100 0.020 0.000 0.000 1.356</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00049</name>
+      <pose>28.100 0.900 0.020 0.000 0.000 -2.180</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00050</name>
+      <pose>32.700 0.500 0.020 0.000 0.000 2.308</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00051</name>
+      <pose>31.300 -0.500 0.020 0.000 0.000 1.082</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00052</name>
+      <pose>33.900 2.900 0.020 0.000 0.000 1.179</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00053</name>
+      <pose>33.500 -1.300 0.020 0.000 0.000 -0.550</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00054</name>
+      <pose>30.300 0.700 0.020 0.000 0.000 3.099</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00055</name>
+      <pose>36.700 3.100 0.020 0.000 0.000 2.284</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00056</name>
+      <pose>35.100 0.500 0.020 0.000 0.000 -2.256</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00057</name>
+      <pose>37.300 0.900 0.020 0.000 0.000 -1.297</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00058</name>
+      <pose>36.500 -0.300 0.020 0.000 0.000 -2.557</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00059</name>
+      <pose>38.500 3.300 0.020 0.000 0.000 2.250</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00060</name>
+      <pose>42.900 1.300 0.020 0.000 0.000 2.850</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00061</name>
+      <pose>41.300 -0.100 0.020 0.000 0.000 -2.899</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00062</name>
+      <pose>43.700 -0.100 0.020 0.000 0.000 1.054</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00063</name>
+      <pose>43.700 3.300 0.020 0.000 0.000 1.946</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00064</name>
+      <pose>40.100 -0.300 0.020 0.000 0.000 1.425</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00065</name>
+      <pose>49.300 1.300 0.020 0.000 0.000 -2.125</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00066</name>
+      <pose>46.500 1.300 0.020 0.000 0.000 -1.801</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00067</name>
+      <pose>46.100 0.100 0.020 0.000 0.000 2.837</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00068</name>
+      <pose>48.100 1.300 0.020 0.000 0.000 -2.551</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00069</name>
+      <pose>44.700 2.900 0.020 0.000 0.000 1.100</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00070</name>
+      <pose>18.700 -3.900 0.020 0.000 0.000 -0.096</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00071</name>
+      <pose>19.700 -3.100 0.020 0.000 0.000 -0.830</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00072</name>
+      <pose>16.700 -4.100 0.020 0.000 0.000 0.999</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00073</name>
+      <pose>17.900 -2.300 0.020 0.000 0.000 0.265</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00074</name>
+      <pose>16.100 -2.300 0.020 0.000 0.000 -3.062</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00075</name>
+      <pose>24.900 -2.300 0.020 0.000 0.000 -0.922</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00076</name>
+      <pose>23.300 -5.500 0.020 0.000 0.000 -2.276</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00077</name>
+      <pose>24.900 -4.300 0.020 0.000 0.000 1.621</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00078</name>
+      <pose>23.900 -3.100 0.020 0.000 0.000 1.188</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00079</name>
+      <pose>20.700 -5.900 0.020 0.000 0.000 -3.141</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00080</name>
+      <pose>27.900 -4.700 0.020 0.000 0.000 1.451</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00081</name>
+      <pose>26.700 -2.700 0.020 0.000 0.000 -2.951</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00082</name>
+      <pose>25.700 -4.300 0.020 0.000 0.000 -1.855</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00083</name>
+      <pose>29.500 -5.900 0.020 0.000 0.000 2.483</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00084</name>
+      <pose>29.700 -4.300 0.020 0.000 0.000 1.778</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00085</name>
+      <pose>33.100 -4.300 0.020 0.000 0.000 1.094</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00086</name>
+      <pose>34.700 -4.300 0.020 0.000 0.000 -1.041</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00087</name>
+      <pose>31.900 -1.700 0.020 0.000 0.000 -1.260</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00088</name>
+      <pose>34.700 -2.900 0.020 0.000 0.000 1.245</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00089</name>
+      <pose>33.100 -1.500 0.020 0.000 0.000 0.649</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00090</name>
+      <pose>37.700 -5.500 0.020 0.000 0.000 -0.663</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00091</name>
+      <pose>35.100 -3.300 0.020 0.000 0.000 0.057</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00092</name>
+      <pose>35.100 -4.900 0.020 0.000 0.000 2.218</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00093</name>
+      <pose>38.500 -3.100 0.020 0.000 0.000 2.958</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00094</name>
+      <pose>36.700 -2.700 0.020 0.000 0.000 -2.565</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00095</name>
+      <pose>40.500 -1.900 0.020 0.000 0.000 0.619</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00096</name>
+      <pose>40.500 -6.100 0.020 0.000 0.000 2.824</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00097</name>
+      <pose>40.100 -4.700 0.020 0.000 0.000 1.943</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00098</name>
+      <pose>42.100 -2.900 0.020 0.000 0.000 -0.520</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00099</name>
+      <pose>43.900 -5.500 0.020 0.000 0.000 0.215</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00100</name>
+      <pose>46.900 -5.500 0.020 0.000 0.000 -2.906</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00101</name>
+      <pose>48.700 -2.300 0.020 0.000 0.000 2.795</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00102</name>
+      <pose>44.900 -1.700 0.020 0.000 0.000 -0.470</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00103</name>
+      <pose>45.700 -4.700 0.020 0.000 0.000 -1.741</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00104</name>
+      <pose>48.500 -4.700 0.020 0.000 0.000 -0.812</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00105</name>
+      <pose>18.300 -8.700 0.020 0.000 0.000 -2.753</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00106</name>
+      <pose>17.500 -10.900 0.020 0.000 0.000 2.141</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00107</name>
+      <pose>16.300 -8.700 0.020 0.000 0.000 0.306</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00108</name>
+      <pose>20.500 -6.500 0.020 0.000 0.000 -1.299</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00109</name>
+      <pose>19.300 -10.500 0.020 0.000 0.000 2.983</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00110</name>
+      <pose>22.700 -10.900 0.020 0.000 0.000 -1.901</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00111</name>
+      <pose>21.500 -6.500 0.020 0.000 0.000 -0.296</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00112</name>
+      <pose>22.500 -7.700 0.020 0.000 0.000 2.386</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00113</name>
+      <pose>24.100 -6.500 0.020 0.000 0.000 -1.018</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00114</name>
+      <pose>23.900 -8.300 0.020 0.000 0.000 2.223</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00115</name>
+      <pose>27.100 -9.500 0.020 0.000 0.000 1.002</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00116</name>
+      <pose>28.900 -7.100 0.020 0.000 0.000 -2.333</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00117</name>
+      <pose>28.300 -10.900 0.020 0.000 0.000 -1.507</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00118</name>
+      <pose>27.700 -7.700 0.020 0.000 0.000 1.042</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00119</name>
+      <pose>29.700 -8.900 0.020 0.000 0.000 -2.178</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00120</name>
+      <pose>30.300 -7.300 0.020 0.000 0.000 -3.087</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00121</name>
+      <pose>34.100 -9.500 0.020 0.000 0.000 -1.685</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00122</name>
+      <pose>34.300 -7.700 0.020 0.000 0.000 2.226</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00123</name>
+      <pose>33.300 -8.500 0.020 0.000 0.000 -1.851</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00124</name>
+      <pose>33.500 -6.300 0.020 0.000 0.000 -0.903</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00125</name>
+      <pose>38.100 -7.300 0.020 0.000 0.000 -1.358</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00126</name>
+      <pose>37.900 -8.900 0.020 0.000 0.000 -0.588</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00127</name>
+      <pose>35.900 -7.900 0.020 0.000 0.000 2.633</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00128</name>
+      <pose>39.300 -6.500 0.020 0.000 0.000 -2.780</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00129</name>
+      <pose>37.900 -10.900 0.020 0.000 0.000 1.359</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00130</name>
+      <pose>40.700 -7.300 0.020 0.000 0.000 -2.339</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00131</name>
+      <pose>43.300 -7.300 0.020 0.000 0.000 3.005</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00132</name>
+      <pose>42.100 -7.900 0.020 0.000 0.000 -1.843</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00133</name>
+      <pose>40.300 -10.700 0.020 0.000 0.000 -1.309</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00134</name>
+      <pose>43.300 -9.500 0.020 0.000 0.000 1.157</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00135</name>
+      <pose>44.900 -9.300 0.020 0.000 0.000 -0.083</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00136</name>
+      <pose>48.300 -7.100 0.020 0.000 0.000 -1.117</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00137</name>
+      <pose>49.100 -9.500 0.020 0.000 0.000 -1.048</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00138</name>
+      <pose>44.700 -7.300 0.020 0.000 0.000 -0.073</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00139</name>
+      <pose>47.100 -7.500 0.020 0.000 0.000 -0.434</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00140</name>
+      <pose>16.700 -15.500 0.020 0.000 0.000 -2.281</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00141</name>
+      <pose>18.100 -14.500 0.020 0.000 0.000 2.654</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00142</name>
+      <pose>20.500 -11.100 0.020 0.000 0.000 2.573</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00143</name>
+      <pose>17.900 -11.700 0.020 0.000 0.000 1.469</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00144</name>
+      <pose>16.300 -13.300 0.020 0.000 0.000 -0.185</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00145</name>
+      <pose>24.700 -11.100 0.020 0.000 0.000 1.483</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00146</name>
+      <pose>22.700 -13.100 0.020 0.000 0.000 1.856</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00147</name>
+      <pose>21.500 -13.500 0.020 0.000 0.000 2.825</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00148</name>
+      <pose>23.500 -15.500 0.020 0.000 0.000 1.898</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00149</name>
+      <pose>20.700 -12.500 0.020 0.000 0.000 0.170</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00150</name>
+      <pose>28.100 -12.300 0.020 0.000 0.000 -1.420</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00151</name>
+      <pose>29.700 -14.500 0.020 0.000 0.000 1.549</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00152</name>
+      <pose>27.300 -15.300 0.020 0.000 0.000 0.041</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00153</name>
+      <pose>25.700 -12.900 0.020 0.000 0.000 -1.216</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00154</name>
+      <pose>27.100 -11.100 0.020 0.000 0.000 -0.957</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00155</name>
+      <pose>31.900 -13.300 0.020 0.000 0.000 -1.126</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00156</name>
+      <pose>34.700 -12.100 0.020 0.000 0.000 -1.727</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00157</name>
+      <pose>32.700 -12.300 0.020 0.000 0.000 -3.021</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00158</name>
+      <pose>32.700 -15.300 0.020 0.000 0.000 -2.301</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00159</name>
+      <pose>31.700 -11.300 0.020 0.000 0.000 -2.414</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00160</name>
+      <pose>36.900 -13.900 0.020 0.000 0.000 3.136</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00161</name>
+      <pose>35.700 -11.100 0.020 0.000 0.000 -1.374</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00162</name>
+      <pose>37.700 -12.300 0.020 0.000 0.000 -1.151</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00163</name>
+      <pose>35.500 -15.500 0.020 0.000 0.000 2.081</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00164</name>
+      <pose>37.700 -15.100 0.020 0.000 0.000 -1.348</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00165</name>
+      <pose>44.500 -13.100 0.020 0.000 0.000 1.629</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00166</name>
+      <pose>41.700 -11.100 0.020 0.000 0.000 -2.385</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00167</name>
+      <pose>39.900 -11.500 0.020 0.000 0.000 -0.002</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00168</name>
+      <pose>43.300 -13.700 0.020 0.000 0.000 -0.335</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00169</name>
+      <pose>41.500 -13.500 0.020 0.000 0.000 0.594</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00170</name>
+      <pose>46.900 -15.300 0.020 0.000 0.000 -1.267</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00171</name>
+      <pose>49.100 -15.500 0.020 0.000 0.000 0.503</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00172</name>
+      <pose>45.100 -12.500 0.020 0.000 0.000 -2.733</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00173</name>
+      <pose>44.700 -15.100 0.020 0.000 0.000 2.861</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00174</name>
+      <pose>47.300 -13.100 0.020 0.000 0.000 0.705</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00175</name>
+      <pose>16.500 -17.300 0.020 0.000 0.000 2.685</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00176</name>
+      <pose>18.900 -19.700 0.020 0.000 0.000 0.402</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00177</name>
+      <pose>18.900 -16.900 0.020 0.000 0.000 3.041</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00178</name>
+      <pose>16.100 -15.900 0.020 0.000 0.000 2.835</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00179</name>
+      <pose>16.500 -20.100 0.020 0.000 0.000 0.182</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00180</name>
+      <pose>23.500 -18.500 0.020 0.000 0.000 1.253</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00181</name>
+      <pose>24.300 -19.900 0.020 0.000 0.000 2.274</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00182</name>
+      <pose>21.500 -18.500 0.020 0.000 0.000 0.655</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00183</name>
+      <pose>22.500 -20.500 0.020 0.000 0.000 -2.897</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00184</name>
+      <pose>24.700 -18.700 0.020 0.000 0.000 -1.699</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00185</name>
+      <pose>28.700 -19.100 0.020 0.000 0.000 -1.684</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00186</name>
+      <pose>29.700 -18.100 0.020 0.000 0.000 -0.150</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00187</name>
+      <pose>26.100 -19.100 0.020 0.000 0.000 -0.083</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00188</name>
+      <pose>27.300 -20.300 0.020 0.000 0.000 -1.571</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00189</name>
+      <pose>29.700 -19.900 0.020 0.000 0.000 2.277</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00190</name>
+      <pose>32.500 -19.900 0.020 0.000 0.000 -2.032</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00191</name>
+      <pose>34.500 -20.300 0.020 0.000 0.000 -0.805</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00192</name>
+      <pose>32.700 -16.500 0.020 0.000 0.000 0.387</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00193</name>
+      <pose>34.100 -17.300 0.020 0.000 0.000 -2.691</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00194</name>
+      <pose>32.100 -17.900 0.020 0.000 0.000 1.772</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00195</name>
+      <pose>39.500 -19.500 0.020 0.000 0.000 -1.059</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00196</name>
+      <pose>35.300 -17.900 0.020 0.000 0.000 -0.717</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00197</name>
+      <pose>36.900 -16.500 0.020 0.000 0.000 2.410</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00198</name>
+      <pose>35.900 -20.100 0.020 0.000 0.000 1.563</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00199</name>
+      <pose>38.100 -19.500 0.020 0.000 0.000 0.150</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00200</name>
+      <pose>42.100 -18.300 0.020 0.000 0.000 -0.931</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00201</name>
+      <pose>43.500 -17.900 0.020 0.000 0.000 -1.505</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00202</name>
+      <pose>39.900 -17.300 0.020 0.000 0.000 1.109</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00203</name>
+      <pose>41.900 -20.300 0.020 0.000 0.000 2.263</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00204</name>
+      <pose>40.300 -19.500 0.020 0.000 0.000 -2.635</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00205</name>
+      <pose>46.900 -19.700 0.020 0.000 0.000 2.760</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00206</name>
+      <pose>46.500 -18.300 0.020 0.000 0.000 1.146</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00207</name>
+      <pose>48.300 -18.100 0.020 0.000 0.000 -1.264</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00208</name>
+      <pose>47.900 -16.900 0.020 0.000 0.000 2.562</pose>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://pine_tree</uri>
+      <name>PINE_TREE_00209</name>
+      <pose>45.100 -18.100 0.020 0.000 0.000 1.052</pose>
+      <static>true</static>
+    </include>
     <model name="building_0000">
       <static>true</static>
       <pose>-0.600 47.600 11.079 0 0 0</pose>
@@ -602,102 +1868,42 @@
         </visual>
       </link>
     </model>
-    <model name="VEHICLE_000">
+    <include>
+      <uri>model://quadrotor</uri>
+      <name>VEHICLE_000</name>
+      <pose>-30.300 -6.500 33.331 0.000 0.000 0.000</pose>
       <static>false</static>
-      <pose>-30.300 -6.500 33.331 0 0 0</pose>
-      <link name="link">
-        <collision name="collision">
-          <geometry><sphere><radius>0.4</radius></sphere></geometry>
-        </collision>
-        <visual name="visual">
-          <geometry><sphere><radius>0.4</radius></sphere></geometry>
-          <material>
-            <ambient>1.000 0.000 1.000 1.000</ambient>
-            <diffuse>1.000 0.000 1.000 1.000</diffuse>
-          </material>
-        </visual>
-      </link>
-    </model>
-    <model name="VEHICLE_001">
+    </include>
+    <include>
+      <uri>model://quadrotor</uri>
+      <name>VEHICLE_001</name>
+      <pose>-31.050 -5.201 33.331 0.000 0.000 0.000</pose>
       <static>false</static>
-      <pose>-31.050 -5.201 33.331 0 0 0</pose>
-      <link name="link">
-        <collision name="collision">
-          <geometry><sphere><radius>0.4</radius></sphere></geometry>
-        </collision>
-        <visual name="visual">
-          <geometry><sphere><radius>0.4</radius></sphere></geometry>
-          <material>
-            <ambient>1.000 0.000 1.000 1.000</ambient>
-            <diffuse>1.000 0.000 1.000 1.000</diffuse>
-          </material>
-        </visual>
-      </link>
-    </model>
-    <model name="VEHICLE_002">
+    </include>
+    <include>
+      <uri>model://quadrotor</uri>
+      <name>VEHICLE_002</name>
+      <pose>-32.550 -5.201 33.331 0.000 0.000 0.000</pose>
       <static>false</static>
-      <pose>-32.550 -5.201 33.331 0 0 0</pose>
-      <link name="link">
-        <collision name="collision">
-          <geometry><sphere><radius>0.4</radius></sphere></geometry>
-        </collision>
-        <visual name="visual">
-          <geometry><sphere><radius>0.4</radius></sphere></geometry>
-          <material>
-            <ambient>1.000 0.000 1.000 1.000</ambient>
-            <diffuse>1.000 0.000 1.000 1.000</diffuse>
-          </material>
-        </visual>
-      </link>
-    </model>
-    <model name="VEHICLE_003">
+    </include>
+    <include>
+      <uri>model://quadrotor</uri>
+      <name>VEHICLE_003</name>
+      <pose>-33.300 -6.500 33.331 0.000 0.000 0.000</pose>
       <static>false</static>
-      <pose>-33.300 -6.500 33.331 0 0 0</pose>
-      <link name="link">
-        <collision name="collision">
-          <geometry><sphere><radius>0.4</radius></sphere></geometry>
-        </collision>
-        <visual name="visual">
-          <geometry><sphere><radius>0.4</radius></sphere></geometry>
-          <material>
-            <ambient>1.000 0.000 1.000 1.000</ambient>
-            <diffuse>1.000 0.000 1.000 1.000</diffuse>
-          </material>
-        </visual>
-      </link>
-    </model>
-    <model name="VEHICLE_004">
+    </include>
+    <include>
+      <uri>model://quadrotor</uri>
+      <name>VEHICLE_004</name>
+      <pose>-32.550 -7.799 33.331 0.000 0.000 0.000</pose>
       <static>false</static>
-      <pose>-32.550 -7.799 33.331 0 0 0</pose>
-      <link name="link">
-        <collision name="collision">
-          <geometry><sphere><radius>0.4</radius></sphere></geometry>
-        </collision>
-        <visual name="visual">
-          <geometry><sphere><radius>0.4</radius></sphere></geometry>
-          <material>
-            <ambient>1.000 0.000 1.000 1.000</ambient>
-            <diffuse>1.000 0.000 1.000 1.000</diffuse>
-          </material>
-        </visual>
-      </link>
-    </model>
-    <model name="VEHICLE_005">
+    </include>
+    <include>
+      <uri>model://quadrotor</uri>
+      <name>VEHICLE_005</name>
+      <pose>-31.050 -7.799 33.331 0.000 0.000 0.000</pose>
       <static>false</static>
-      <pose>-31.050 -7.799 33.331 0 0 0</pose>
-      <link name="link">
-        <collision name="collision">
-          <geometry><sphere><radius>0.4</radius></sphere></geometry>
-        </collision>
-        <visual name="visual">
-          <geometry><sphere><radius>0.4</radius></sphere></geometry>
-          <material>
-            <ambient>1.000 0.000 1.000 1.000</ambient>
-            <diffuse>1.000 0.000 1.000 1.000</diffuse>
-          </material>
-        </visual>
-      </link>
-    </model>
+    </include>
     <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so">
       <ros>
         <namespace>gazebo</namespace>
