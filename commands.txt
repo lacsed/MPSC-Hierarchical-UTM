@@ -3,7 +3,8 @@ generate world:
 python3 gen_world_from_image_gz.py 6 1 1 2 4 --map ./assets/finalmap.png --out gz_world_out --res 0.2 --seed 77
 
 launching world
-ros2 launch gazebo_ros gazebo.launch.py world:=/home/mploures/MPSC-Hierarchical-UTM/scripts/gz_world_out/utm_world.sdf
+gazebo --pause --verbose utm_world.sdf
+
 
 finishes gazebo
 pkill -f gzserver || true
