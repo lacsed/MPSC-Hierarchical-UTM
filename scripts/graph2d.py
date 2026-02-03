@@ -21,10 +21,9 @@ K_SPECIAL = 1
 
 LOGICAL_MAX_DEG = 4
 LOGICAL_LL_TARGET = 2
-LOGICAL_SL_CAP = LOGICAL_MAX_DEG - LOGICAL_LL_TARGET  # 2 by default
+LOGICAL_SL_CAP = LOGICAL_MAX_DEG - LOGICAL_LL_TARGET  
+ 
 
-SPECIAL_MIN_DEG = 1
-SPECIAL_MAX_DEG = 2
 
 TRI_MIN_AREA_PX2 = 1200.0
 
@@ -38,11 +37,6 @@ TOUCH_EPS = 1e-9
 KNN_LOCAL = 32
 MAX_OUT_EDGES = 16
 
-# LL path search
-LL_GRID_CELL = 96.0
-LL_R_STEP = 120.0
-LL_R_STEPS = 12
-LL_TRIES = 60
 
 
 # -----------------------------
@@ -57,7 +51,7 @@ _GLOBAL_ALLOW_OVERFLIGHT = False
 
 _CACHE_KEY = None
 _TRIANGLES = None
-_FORBID_TRIS = None
+
 _LOGICAL_SIDS = None
 _LOGICAL_POS = None
 _LOGICAL_TRI = None
@@ -779,7 +773,6 @@ def build_visibility_candidates_for_specials(
     candidate_logical_sids,
     pos_skel,
     boxes,
-    max_candidates_per_special=40,
     allow_overflight=False,
 ):
     global _GLOBAL_BOXES, _GLOBAL_ALLOW_OVERFLIGHT
@@ -800,13 +793,6 @@ def build_visibility_candidates_for_specials(
         lst2 = []
         for sid in lst:
             P = (float(pos_skel[sid][0]), float(pos_skel[sid][1]))
-            if boxes and point_in_any_box(P, boxes, ignore_indices=set()):
-                continue
-            if (not allow_overflight) and boxes:
-                bi = sp.get("bi", None)
-                ignore = {bi} if bi is not None else set()
-                if seg_hits_any_box(S, P, boxes, ignore_indices=ignore):
-                    continue
             lst2.append(sid)
 
         if not lst2:
@@ -817,9 +803,8 @@ def build_visibility_candidates_for_specials(
                 allowed[s_id] = []
             continue
 
-        k = int(max(1, max_candidates_per_special))
         lst2 = sorted(lst2, key=lambda sid: _dist(S, pos_skel[sid]))
-        allowed[s_id] = lst2[:k]
+        allowed[s_id] = lst2 
 
     return allowed
 
@@ -840,11 +825,7 @@ def greedy_select_logical_nodes_randomized(special_ids, allowed_by_special, max_
     all_cands = sorted(all_cands)
     if not all_cands:
         return None
-
-    if max_nodes is None or max_nodes <= 0:
-        return all_cands
-    if len(all_cands) > int(max_nodes):
-        return None
+    
     return all_cands
 
 
@@ -1006,7 +987,7 @@ def build_ll_tree_from_caps(ll_caps=None, seed=0):
 
 
 # -----------------------------
-# Optional refine hook (clamp only)
+# Optional refine hook 
 # -----------------------------
 
 def refine_logical_positions_only(
@@ -1021,14 +1002,159 @@ def refine_logical_positions_only(
     seed=42,
 ):
     _ensure_logical_globals()
+
+    # --- tunables (px) ---
+    R = float(MIN_PT_CLEAR_PX)          # clearance from special to any segment
+    R2 = R * R
+    MAX_PASSES = 6                      # greedy sweeps over all logicals
+    EPS = 1e-6
+
+    sids = list(selected_sids or [])
+    if not sids:
+        return {}
+
+    # logical positions (mutable)
+    pos = {sid: (float(_px(sid)[0]), float(_px(sid)[1])) for sid in sids}
+
+    # specials
+    sp_ids = [sp["id"] for sp in (specials or [])]
+    sp_pos = {sp["id"]: (float(sp["px"]), float(sp["py"])) for sp in (specials or [])}
+
+    rng = random.Random(seed)
+
+    # build incident segments for each logical sid (end at logical)
+    incident = {l: [] for l in sids}
+
+    # SL edges from assignment_by_special: segment (S -> L)
+    if assignment_by_special:
+        for s in sp_ids:
+            for l in assignment_by_special.get(s, ()):
+                if l in incident and s in sp_pos:
+                    incident[l].append(("SL", s))
+
+    # LL edges from ll_tree_edges indices: segment (Lj -> Li)
+    if ll_tree_edges:
+        for (i, j) in ll_tree_edges:
+            if 0 <= i < len(sids) and 0 <= j < len(sids):
+                li = sids[i]
+                lj = sids[j]
+                incident[li].append(("LL", lj))
+                incident[lj].append(("LL", li))
+
+    def clamp_xy(x, y):
+        x = _clamp(x, 1.0, float(W - 2))
+        y = _clamp(y, 1.0, float(H - 2))
+        return x, y
+
+    def nudge_out_of_boxes(x, y, tries=12):
+        if not boxes or not point_in_any_box((x, y), boxes, ignore_indices=set()):
+            return x, y
+        for _ in range(tries):
+            ang = rng.random() * (2.0 * math.pi)
+            rad = (0.25 + 0.75 * rng.random()) * R
+            tx, ty = clamp_xy(x + math.cos(ang) * rad, y + math.sin(ang) * rad)
+            if not point_in_any_box((tx, ty), boxes, ignore_indices=set()):
+                return tx, ty
+        return x, y
+
+    def closest_point_on_seg(P, A, B):
+        # returns (C, t) where C = A + t(B-A), t in [0,1]
+        ax, ay = A
+        bx, by = B
+        px, py = P
+        abx = bx - ax
+        aby = by - ay
+        apx = px - ax
+        apy = py - ay
+        ab2 = abx * abx + aby * aby
+        if ab2 <= 1e-12:
+            return (ax, ay), 0.0
+        t = (apx * abx + apy * aby) / ab2
+        if t < 0.0:
+            t = 0.0
+        elif t > 1.0:
+            t = 1.0
+        cx = ax + t * abx
+        cy = ay + t * aby
+        return (cx, cy), t
+
+    def push_logical_for_violation(L, A, B, P):
+        # Move only B (= logical) so that dist(P, seg(A,B)) == R
+        C, t = closest_point_on_seg(P, A, B)
+        dx = C[0] - P[0]
+        dy = C[1] - P[1]
+        d2 = dx * dx + dy * dy
+        if d2 >= R2 or d2 <= 1e-12:
+            return B, False
+
+        d = math.sqrt(d2)
+        nx = dx / d
+        ny = dy / d
+        need = (R - d)
+
+        # Greedy shift: move endpoint B along normal away from P
+        # scale by (1/(t+eps)) so interior closest-point reacts faster
+        gain = 1.0 / max(EPS, t)
+        sx = nx * need * gain
+        sy = ny * need * gain
+
+        nbx, nby = clamp_xy(B[0] + sx, B[1] + sy)
+        nbx, nby = nudge_out_of_boxes(nbx, nby)
+        return (nbx, nby), True
+
+    # greedy passes
+    for _pass in range(MAX_PASSES):
+        moved_any = False
+
+        for L in sids:
+            lx, ly = pos[L]
+
+            for kind, other in incident.get(L, []):
+                # segment endpoints: A (fixed), B (logical)
+                if kind == "SL":
+                    s = other
+                    A = sp_pos[s]
+                    B = (lx, ly)
+                    end_u = s
+                    end_v = L
+                else:  # LL
+                    Lj = other
+                    A = pos[Lj]
+                    B = (lx, ly)
+                    end_u = Lj
+                    end_v = L
+
+                # check all specials except endpoints
+                for sp_id in sp_ids:
+                    if sp_id == end_u or sp_id == end_v:
+                        continue
+                    P = sp_pos[sp_id]
+
+                    C, _t = closest_point_on_seg(P, A, B)
+                    ddx = C[0] - P[0]
+                    ddy = C[1] - P[1]
+                    if (ddx * ddx + ddy * ddy) >= R2:
+                        continue
+
+                    # fix this violation immediately
+                    newB, moved = push_logical_for_violation(L, A, B, P)
+                    if moved:
+                        lx, ly = newB
+                        pos[L] = (lx, ly)
+                        moved_any = True
+                        B = (lx, ly)  # update segment for next checks
+
+        if not moved_any:
+            break
+
+    # write back
     out = {}
-    for sid in selected_sids:
-        p = _px(sid)
-        p = (_clamp(p[0], 1.0, float(W - 2)), _clamp(p[1], 1.0, float(H - 2)))
-        out[sid] = (float(p[0]), float(p[1]))
+    for sid in sids:
+        out[sid] = pos[sid]
         _GLOBAL_POS_SKEL[sid] = out[sid]
         if _LOGICAL_POS and sid in _LOGICAL_POS:
             _LOGICAL_POS[sid] = out[sid]
+
     return out
 
 
