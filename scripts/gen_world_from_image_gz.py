@@ -102,16 +102,6 @@ def main(
     if len(boxes) == 0:
         raise RuntimeError("No building boxes detected (check palette tolerances / map colors).")
 
-    building_heights = city.sample_building_heights(len(boxes), seed=seed, random_height=True, height_fixed=20.0)
-    tallest = float(max(building_heights))
-    z_logical_final = tallest + float(LOGICAL_ABOVE_TALLEST)
-    allow_overflight = (not no_overflight) and (z_logical_final >= tallest + OVERFLIGHT_MARGIN_M)
-
-    logger.info(
-        f"Height stats: tallest={tallest:.2f}m | z_logical={z_logical_final:.2f}m | "
-        f"z_special={z_special:.2f}m | z_vehicle={z_vehicle:.2f}m | overflight={'ON' if allow_overflight else 'OFF'}"
-    )
-
     total_special = num_vertiports + num_charging + num_suppliers + num_clients
     if total_special <= 0:
         raise RuntimeError("total_special == 0 (configure num_vertiports/charging/suppliers/clients).")
@@ -136,6 +126,26 @@ def main(
     for _ in range(min(num_clients, total_special - k)):
         roles_by_index[chosen[k]] = "client"
         k += 1
+
+    building_heights = city.sample_building_heights(
+        len(boxes),
+        seed=seed,
+        random_height=True,
+        special_indices=roles_by_index.keys(),
+        base_min=8.0,
+        base_max=25.0,
+        special_min=26.0,
+        special_max=35.0,
+    )
+    
+    tallest = float(max(building_heights))
+    z_logical_final = tallest + float(LOGICAL_ABOVE_TALLEST)
+    allow_overflight = (not no_overflight) and (z_logical_final >= tallest + OVERFLIGHT_MARGIN_M)
+
+    logger.info(
+        f"Height stats: tallest={tallest:.2f}m | z_logical={z_logical_final:.2f}m | "
+        f"z_special={z_special:.2f}m | z_vehicle={z_vehicle:.2f}m | overflight={'ON' if allow_overflight else 'OFF'}"
+    )
 
 
     skel01 = g2d.skeletonize_roads(mask_roads)
@@ -222,6 +232,8 @@ def main(
             )
             if res is None:
                 continue
+
+            
             assignment, deg_special_local = res
 
             ll_caps = [max_deg_logical - d for d in deg_special_local]
@@ -342,6 +354,38 @@ def main(
         for v in vehicles:
             vehicle_markers.append((v["id"], v["x"], v["y"], float(v["z"])))
 
+    # Build lookup for node positions (world)
+    node_pos = {}
+
+    # logical nodes
+    for i, sid in enumerate(best_selected):
+        px, py = pos_skel_ref[sid]
+        xw, yw = city.px_to_world(px, py, W, H, resolution_m_per_px)
+        nid = f"LOGICAL_{i:03d}"
+        node_pos[nid] = (float(xw), float(yw), float(z_logical_final))
+
+    # specials + vehicles already computed earlier in your code:
+    # specials: sp["id"] etc.
+    for sp in specials:
+        bi = sp["bi"]
+        xw, yw = city.px_to_world(sp["px"], sp["py"], W, H, resolution_m_per_px)
+        roof_z = float(building_heights[bi])
+        sp_z = roof_z + float(z_special)
+        node_pos[sp["id"]] = (float(xw), float(yw), float(sp_z))
+
+    # LL edges are created as (LOGICAL_i, LOGICAL_j) already in edge_rows,
+    # SL edges were appended as (special_id, logical_id).
+    edge_markers = []
+    edge_id = 0
+    for (a, b) in edge_rows:
+        if a not in node_pos or b not in node_pos:
+            continue
+        x1, y1, z1 = node_pos[a]
+        x2, y2, z2 = node_pos[b]
+        edge_markers.append((f"EDGE_{edge_id:05d}", x1, y1, z1, x2, y2, z2))
+        edge_id += 1
+
+
     sdf = city.make_world_sdf(
         W_px=W,
         H_px=H,
@@ -354,7 +398,9 @@ def main(
         vehicle_markers=vehicle_markers if spawn_markers else None,
         park_models=park_models,
         vehicle_model_uri="model://quadrotor",
+        edge_markers=edge_markers,   
     )
+
     sdf_path = os.path.join(out_dir, "utm_world.sdf")
     with open(sdf_path, "w", encoding="utf-8") as f:
         f.write(sdf)

@@ -410,7 +410,6 @@ def write_ogre_material(out_dir, texture_filename="finalmap.png"):
       lighting on
       ambient 1 1 1 1
       diffuse 1 1 1 1
-      specular 0 0 0 1
 
       texture_unit
       {
@@ -517,11 +516,39 @@ def world_to_px(wx, wy, W_px, H_px, res):
     return (px, py)
 
 
-def sample_building_heights(n, seed, random_height=True, height_fixed=20.0):
+def sample_building_heights(
+    n,
+    seed,
+    random_height=True,
+    height_fixed=20.0,
+    special_indices=None,      
+    base_min=BUILDING_H_MIN,
+    base_max=BUILDING_H_MAX,
+    special_min=None,        
+    special_max=None,
+):
     rnd = random.Random(seed + 12345)
     if not random_height:
         return [float(height_fixed)] * n
-    return [rnd.uniform(BUILDING_H_MIN, BUILDING_H_MAX) for _ in range(n)]
+
+    if special_indices is None:
+        special_indices = set()
+    else:
+        special_indices = set(int(i) for i in special_indices)
+
+    if special_min is None:
+        special_min = min(base_max, BUILDING_H_MAX) 
+    if special_max is None:
+        special_max = BUILDING_H_MAX
+
+    heights = [0.0] * n
+    for i in range(n):
+        if i in special_indices:
+            heights[i] = rnd.uniform(special_min, special_max)
+        else:
+            heights[i] = rnd.uniform(base_min, base_max)
+    return heights
+
 
 def distribute_vehicles_over_vertiports(
     num_vehicles,
@@ -593,6 +620,7 @@ def make_world_sdf(
     vehicle_model_uri="model://quadrotor",
     ground_z=0.0,
     min_vehicle_alt=1.0,
+    edge_markers=None,
 ):
     lines = []
 
@@ -604,6 +632,59 @@ def make_world_sdf(
         if static is not None:
             lines.append("      <static>%s</static>" % ("true" if static else "false"))
         lines.append("    </include>")
+
+    def _edge_cylinder_model(name, x1, y1, z1, x2, y2, z2,
+                             radius=0.12,
+                             rgba=(0.3, 1.0, 1.0, 0.35),
+                             static="true"):
+        """
+        Visual-only cylinder connecting p1->p2.
+        - No collision
+        - Semi-transparent cyan by default
+        """
+        dx = float(x2 - x1)
+        dy = float(y2 - y1)
+        dz = float(z2 - z1)
+        L = math.sqrt(dx*dx + dy*dy + dz*dz)
+        if L < 1e-6:
+            return  # ignore degenerate edges
+
+        # Midpoint
+        mx = 0.5 * (x1 + x2)
+        my = 0.5 * (y1 + y2)
+        mz = 0.5 * (z1 + z2)
+
+        # Orientation: align cylinder Z-axis with vector (dx,dy,dz)
+        # Using roll/pitch with yaw=atan2(dy,dx) and pitch=atan2(sqrt(dx^2+dy^2), dz)
+        yaw = math.atan2(dy, dx)
+        horiz = math.sqrt(dx*dx + dy*dy)
+        pitch = math.atan2(horiz, dz)  # 0 if pointing up, pi/2 if horizontal
+
+        rr, gg, bb, aa = rgba
+
+        lines.append(f'    <model name="{name}">')
+        lines.append(f'      <static>{static}</static>')
+        lines.append('      <link name="link">')
+        lines.append(f'        <pose>{mx:.3f} {my:.3f} {mz:.3f} 0 {pitch:.6f} {yaw:.6f}</pose>')
+        lines.append('        <visual name="visual">')
+        lines.append('          <geometry>')
+        lines.append('            <cylinder>')
+        lines.append(f'              <radius>{radius:.3f}</radius>')
+        lines.append(f'              <length>{L:.3f}</length>')
+        lines.append('            </cylinder>')
+        lines.append('          </geometry>')
+        lines.append('          <material>')
+        lines.append(f'            <ambient>{rr:.3f} {gg:.3f} {bb:.3f} {aa:.3f}</ambient>')
+        lines.append(f'            <diffuse>{rr:.3f} {gg:.3f} {bb:.3f} {aa:.3f}</diffuse>')
+        lines.append(f'            <emissive>{rr:.3f} {gg:.3f} {bb:.3f} {aa:.3f}</emissive>')
+        lines.append('          </material>')
+        # Gazebo classic honors <transparency> in many cases
+        lines.append('          <transparency>0.65</transparency>')
+        lines.append('          <cast_shadows>false</cast_shadows>')
+        lines.append('        </visual>')
+        lines.append('      </link>')
+        lines.append('    </model>')
+
 
     width_m = W_px * resolution_m_per_px
     height_m = H_px * resolution_m_per_px
@@ -621,8 +702,8 @@ def make_world_sdf(
     lines.append('    </physics>')
 
     lines.append('    <scene>')
-    lines.append('      <ambient>0.8 0.8 0.8 1</ambient>')
-    lines.append('      <background>0.9 0.9 0.9 1</background>')
+    lines.append('      <ambient>0.5 0.5 0.5 1</ambient>')
+    lines.append('      <background>0.3 0.3 0.4 1</background>')
     lines.append('    </scene>')
 
     lines.append('    <model name="map_ground">')
@@ -792,6 +873,19 @@ def make_world_sdf(
                 safe_z = max(float(z), float(z_roof))  
 
             _include_model(vehicle_model_uri, name, x, y, safe_z, roll=0.0, pitch=0.0, yaw=yaw, static=False)
+
+    if edge_markers:
+        # edge_markers entries: (name, x1, y1, z1, x2, y2, z2)
+        for e in edge_markers:
+            ename, x1, y1, z1, x2, y2, z2 = e
+            _edge_cylinder_model(
+                name=str(ename),
+                x1=float(x1), y1=float(y1), z1=float(z1),
+                x2=float(x2), y2=float(y2), z2=float(z2),
+                radius=2,                
+                rgba=(0.3, 1.0, 1.0, 0.35),  
+                static="true",
+            )
 
 
     lines.append('    <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so">')
