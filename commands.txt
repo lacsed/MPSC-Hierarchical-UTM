@@ -3,6 +3,11 @@ generate world:
 python3 gen_world_from_image_gz.py 6 1 1 2 4 --map ./assets/finalmap.png --out gz_world_out --res 0.2 --seed 77
 
 launching world
+cd ~/MPSC-Hierarchical-UTM/scripts/gz_world_out
+source /usr/share/gazebo-11/setup.sh 2>/dev/null || true
+export GAZEBO_MODEL_PATH="$PWD:${GAZEBO_MODEL_PATH}"
+export GAZEBO_RESOURCE_PATH="$PWD:${GAZEBO_RESOURCE_PATH}"
+export GAZEBO_PLUGIN_PATH="/opt/ros/galactic/lib:${GAZEBO_PLUGIN_PATH}"
 gazebo --pause --verbose utm_world.sdf
 
 
