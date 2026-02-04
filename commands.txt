@@ -55,5 +55,6 @@ ros2 run utm_fleet utm_fleet_demo \
   --edges /home/mploures/MPSC-Hierarchical-UTM/scripts/gz_world_out/graph_edges.csv \
   --rate 10 \
   --speed 4.0 \
-  --tol 0.7 \
+  --vspeed 1.0 \
   --set-service /gazebo/set_entity_state
+

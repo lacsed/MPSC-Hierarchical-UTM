@@ -8,8 +8,8 @@
       <real_time_update_rate>500</real_time_update_rate>
     </physics>
     <scene>
-      <ambient>0.8 0.8 0.8 1</ambient>
-      <background>0.9 0.9 0.9 1</background>
+      <ambient>0.5 0.5 0.5 1</ambient>
+      <background>0.3 0.3 0.4 1</background>
     </scene>
     <model name="map_ground">
       <static>true</static>
@@ -1310,16 +1310,16 @@
     </include>
     <model name="building_0000">
       <static>true</static>
-      <pose>-0.600 47.600 11.079 0 0 0</pose>
+      <pose>-0.600 47.600 15.360 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>15.400 7.400 22.158</size></box>
+            <box><size>15.400 7.400 30.719</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>15.400 7.400 22.158</size></box>
+            <box><size>15.400 7.400 30.719</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1331,11 +1331,11 @@
     </model>
     <model name="charging_0000">
       <static>true</static>
-      <pose>-0.600 47.600 11.179 0 0 0</pose>
+      <pose>-0.600 47.600 15.460 0 0 0</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
-            <box><size>15.862 7.622 22.358</size></box>
+            <box><size>15.862 7.622 30.919</size></box>
           </geometry>
           <material>
             <ambient>0.000 0.300 1.000 1.000</ambient>
@@ -1347,16 +1347,16 @@
     </model>
     <model name="building_0001">
       <static>true</static>
-      <pose>-0.600 22.600 8.850 0 0 0</pose>
+      <pose>-0.600 22.600 14.617 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>15.400 39.800 17.700</size></box>
+            <box><size>15.400 39.800 29.233</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>15.400 39.800 17.700</size></box>
+            <box><size>15.400 39.800 29.233</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1368,11 +1368,11 @@
     </model>
     <model name="client_0001">
       <static>true</static>
-      <pose>-0.600 22.600 8.950 0 0 0</pose>
+      <pose>-0.600 22.600 14.717 0 0 0</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
-            <box><size>15.862 40.994 17.900</size></box>
+            <box><size>15.862 40.994 29.433</size></box>
           </geometry>
           <material>
             <ambient>1.000 0.500 0.000 1.000</ambient>
@@ -1384,16 +1384,16 @@
     </model>
     <model name="building_0002">
       <static>true</static>
-      <pose>-31.800 39.600 5.312 0 0 0</pose>
+      <pose>-31.800 39.600 4.826 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>18.600 5.400 10.623</size></box>
+            <box><size>18.600 5.400 9.652</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>18.600 5.400 10.623</size></box>
+            <box><size>18.600 5.400 9.652</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1405,16 +1405,16 @@
     </model>
     <model name="building_0003">
       <static>true</static>
-      <pose>-16.100 39.600 11.774 0 0 0</pose>
+      <pose>-16.100 39.600 15.591 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>10.800 5.400 23.548</size></box>
+            <box><size>10.800 5.400 31.183</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>10.800 5.400 23.548</size></box>
+            <box><size>10.800 5.400 31.183</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1426,11 +1426,11 @@
     </model>
     <model name="client_0003">
       <static>true</static>
-      <pose>-16.100 39.600 11.874 0 0 0</pose>
+      <pose>-16.100 39.600 15.691 0 0 0</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
-            <box><size>11.124 5.562 23.748</size></box>
+            <box><size>11.124 5.562 31.383</size></box>
           </geometry>
           <material>
             <ambient>1.000 0.500 0.000 1.000</ambient>
@@ -1442,16 +1442,16 @@
     </model>
     <model name="building_0004">
       <static>true</static>
-      <pose>-31.800 31.700 15.583 0 0 0</pose>
+      <pose>-31.800 31.700 16.861 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>18.600 9.200 31.166</size></box>
+            <box><size>18.600 9.200 33.722</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>18.600 9.200 31.166</size></box>
+            <box><size>18.600 9.200 33.722</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1463,11 +1463,11 @@
     </model>
     <model name="supplier_0004">
       <static>true</static>
-      <pose>-31.800 31.700 15.683 0 0 0</pose>
+      <pose>-31.800 31.700 16.961 0 0 0</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
-            <box><size>19.158 9.476 31.366</size></box>
+            <box><size>19.158 9.476 33.922</size></box>
           </geometry>
           <material>
             <ambient>0.000 1.000 0.000 1.000</ambient>
@@ -1479,16 +1479,16 @@
     </model>
     <model name="building_0005">
       <static>true</static>
-      <pose>-16.100 31.700 11.556 0 0 0</pose>
+      <pose>-16.100 31.700 8.757 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>10.800 9.200 23.112</size></box>
+            <box><size>10.800 9.200 17.515</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>10.800 9.200 23.112</size></box>
+            <box><size>10.800 9.200 17.515</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1500,16 +1500,16 @@
     </model>
     <model name="building_0006">
       <static>true</static>
-      <pose>-31.800 14.600 6.924 0 0 0</pose>
+      <pose>-31.800 14.600 5.841 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>18.600 23.800 13.848</size></box>
+            <box><size>18.600 23.800 11.682</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>18.600 23.800 13.848</size></box>
+            <box><size>18.600 23.800 11.682</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1521,16 +1521,16 @@
     </model>
     <model name="building_0007">
       <static>true</static>
-      <pose>-16.100 14.600 6.725 0 0 0</pose>
+      <pose>-16.100 14.600 13.908 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>10.800 23.800 13.450</size></box>
+            <box><size>10.800 23.800 27.817</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>10.800 23.800 13.450</size></box>
+            <box><size>10.800 23.800 27.817</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1542,11 +1542,11 @@
     </model>
     <model name="client_0007">
       <static>true</static>
-      <pose>-16.100 14.600 6.825 0 0 0</pose>
+      <pose>-16.100 14.600 14.008 0 0 0</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
-            <box><size>11.124 24.514 13.650</size></box>
+            <box><size>11.124 24.514 28.017</size></box>
           </geometry>
           <material>
             <ambient>1.000 0.500 0.000 1.000</ambient>
@@ -1558,16 +1558,16 @@
     </model>
     <model name="building_0008">
       <static>true</static>
-      <pose>-31.800 -6.500 15.166 0 0 0</pose>
+      <pose>-31.800 -6.500 16.722 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>18.600 15.200 30.331</size></box>
+            <box><size>18.600 15.200 33.444</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>18.600 15.200 30.331</size></box>
+            <box><size>18.600 15.200 33.444</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1579,11 +1579,11 @@
     </model>
     <model name="vertiport_0008">
       <static>true</static>
-      <pose>-31.800 -6.500 15.266 0 0 0</pose>
+      <pose>-31.800 -6.500 16.822 0 0 0</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
-            <box><size>19.158 15.656 30.531</size></box>
+            <box><size>19.158 15.656 33.644</size></box>
           </geometry>
           <material>
             <ambient>1.000 0.000 0.000 1.000</ambient>
@@ -1595,16 +1595,16 @@
     </model>
     <model name="building_0009">
       <static>true</static>
-      <pose>-16.100 -6.500 16.147 0 0 0</pose>
+      <pose>-16.100 -6.500 11.648 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>10.800 15.200 32.294</size></box>
+            <box><size>10.800 15.200 23.296</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>10.800 15.200 32.294</size></box>
+            <box><size>10.800 15.200 23.296</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1616,16 +1616,16 @@
     </model>
     <model name="building_0010">
       <static>true</static>
-      <pose>-0.700 -4.400 4.416 0 0 0</pose>
+      <pose>-0.700 -4.400 4.262 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>15.600 11.000 8.831</size></box>
+            <box><size>15.600 11.000 8.523</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>15.600 11.000 8.831</size></box>
+            <box><size>15.600 11.000 8.523</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1637,16 +1637,16 @@
     </model>
     <model name="building_0011">
       <static>true</static>
-      <pose>10.500 -4.400 11.457 0 0 0</pose>
+      <pose>10.500 -4.400 8.695 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>5.600 11.000 22.913</size></box>
+            <box><size>5.600 11.000 17.390</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>5.600 11.000 22.913</size></box>
+            <box><size>5.600 11.000 17.390</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1658,16 +1658,16 @@
     </model>
     <model name="building_0012">
       <static>true</static>
-      <pose>-0.700 -16.600 8.159 0 0 0</pose>
+      <pose>-0.700 -16.600 6.619 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>15.600 12.200 16.318</size></box>
+            <box><size>15.600 12.200 13.237</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>15.600 12.200 16.318</size></box>
+            <box><size>15.600 12.200 13.237</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1679,16 +1679,16 @@
     </model>
     <model name="building_0013">
       <static>true</static>
-      <pose>10.500 -16.600 16.869 0 0 0</pose>
+      <pose>10.500 -16.600 17.290 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>5.600 12.200 33.739</size></box>
+            <box><size>5.600 12.200 34.580</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>5.600 12.200 33.739</size></box>
+            <box><size>5.600 12.200 34.580</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1700,11 +1700,11 @@
     </model>
     <model name="supplier_0013">
       <static>true</static>
-      <pose>10.500 -16.600 16.969 0 0 0</pose>
+      <pose>10.500 -16.600 17.390 0 0 0</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
-            <box><size>5.768 12.566 33.939</size></box>
+            <box><size>5.768 12.566 34.780</size></box>
           </geometry>
           <material>
             <ambient>0.000 1.000 0.000 1.000</ambient>
@@ -1716,16 +1716,16 @@
     </model>
     <model name="building_0014">
       <static>true</static>
-      <pose>-31.800 -18.700 15.957 0 0 0</pose>
+      <pose>-31.800 -18.700 11.529 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>18.600 8.000 31.915</size></box>
+            <box><size>18.600 8.000 23.057</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>18.600 8.000 31.915</size></box>
+            <box><size>18.600 8.000 23.057</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1737,16 +1737,16 @@
     </model>
     <model name="building_0015">
       <static>true</static>
-      <pose>-16.100 -18.700 5.955 0 0 0</pose>
+      <pose>-16.100 -18.700 13.652 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
-            <box><size>10.800 8.000 11.909</size></box>
+            <box><size>10.800 8.000 27.303</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>10.800 8.000 11.909</size></box>
+            <box><size>10.800 8.000 27.303</size></box>
           </geometry>
           <material>
             <ambient>0.050 0.050 0.050 1.000</ambient>
@@ -1758,11 +1758,11 @@
     </model>
     <model name="client_0015">
       <static>true</static>
-      <pose>-16.100 -18.700 6.055 0 0 0</pose>
+      <pose>-16.100 -18.700 13.752 0 0 0</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
-            <box><size>11.124 8.240 12.109</size></box>
+            <box><size>11.124 8.240 27.503</size></box>
           </geometry>
           <material>
             <ambient>1.000 0.500 0.000 1.000</ambient>
@@ -1774,7 +1774,7 @@
     </model>
     <model name="LOGICAL_000">
       <static>true</static>
-      <pose>3.100 17.867 38.739 0 0 0</pose>
+      <pose>3.100 17.867 39.580 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry><sphere><radius>0.4</radius></sphere></geometry>
@@ -1790,7 +1790,7 @@
     </model>
     <model name="LOGICAL_001">
       <static>true</static>
-      <pose>-5.767 36.600 38.739 0 0 0</pose>
+      <pose>-5.767 36.600 39.580 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry><sphere><radius>0.4</radius></sphere></geometry>
@@ -1806,7 +1806,7 @@
     </model>
     <model name="LOGICAL_002">
       <static>true</static>
-      <pose>-16.167 31.300 38.739 0 0 0</pose>
+      <pose>-16.167 31.300 39.580 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry><sphere><radius>0.4</radius></sphere></geometry>
@@ -1822,7 +1822,7 @@
     </model>
     <model name="LOGICAL_003">
       <static>true</static>
-      <pose>-21.679 8.921 38.739 0 0 0</pose>
+      <pose>-16.167 22.967 39.580 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry><sphere><radius>0.4</radius></sphere></geometry>
@@ -1838,7 +1838,7 @@
     </model>
     <model name="LOGICAL_004">
       <static>true</static>
-      <pose>-26.567 2.167 38.739 0 0 0</pose>
+      <pose>-21.679 8.921 39.580 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry><sphere><radius>0.4</radius></sphere></geometry>
@@ -1854,7 +1854,39 @@
     </model>
     <model name="LOGICAL_005">
       <static>true</static>
-      <pose>-8.908 -2.987 38.739 0 0 0</pose>
+      <pose>-26.567 2.167 39.580 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><sphere><radius>0.4</radius></sphere></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><sphere><radius>0.4</radius></sphere></geometry>
+          <material>
+            <ambient>1.000 1.000 0.000 1.000</ambient>
+            <diffuse>1.000 1.000 0.000 1.000</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="LOGICAL_006">
+      <static>true</static>
+      <pose>-2.067 6.867 39.580 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><sphere><radius>0.4</radius></sphere></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><sphere><radius>0.4</radius></sphere></geometry>
+          <material>
+            <ambient>1.000 1.000 0.000 1.000</ambient>
+            <diffuse>1.000 1.000 0.000 1.000</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="LOGICAL_007">
+      <static>true</static>
+      <pose>-8.908 -2.987 39.580 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry><sphere><radius>0.4</radius></sphere></geometry>
@@ -1871,39 +1903,711 @@
     <include>
       <uri>model://quadrotor</uri>
       <name>VEHICLE_000</name>
-      <pose>-30.300 -6.500 33.331 0.000 0.000 0.000</pose>
+      <pose>-30.300 -6.500 33.544 0.000 0.000 0.000</pose>
       <static>false</static>
     </include>
     <include>
       <uri>model://quadrotor</uri>
       <name>VEHICLE_001</name>
-      <pose>-31.050 -5.201 33.331 0.000 0.000 0.000</pose>
+      <pose>-31.050 -5.201 33.544 0.000 0.000 0.000</pose>
       <static>false</static>
     </include>
     <include>
       <uri>model://quadrotor</uri>
       <name>VEHICLE_002</name>
-      <pose>-32.550 -5.201 33.331 0.000 0.000 0.000</pose>
+      <pose>-32.550 -5.201 33.544 0.000 0.000 0.000</pose>
       <static>false</static>
     </include>
     <include>
       <uri>model://quadrotor</uri>
       <name>VEHICLE_003</name>
-      <pose>-33.300 -6.500 33.331 0.000 0.000 0.000</pose>
+      <pose>-33.300 -6.500 33.544 0.000 0.000 0.000</pose>
       <static>false</static>
     </include>
     <include>
       <uri>model://quadrotor</uri>
       <name>VEHICLE_004</name>
-      <pose>-32.550 -7.799 33.331 0.000 0.000 0.000</pose>
+      <pose>-32.550 -7.799 33.544 0.000 0.000 0.000</pose>
       <static>false</static>
     </include>
     <include>
       <uri>model://quadrotor</uri>
       <name>VEHICLE_005</name>
-      <pose>-31.050 -7.799 33.331 0.000 0.000 0.000</pose>
+      <pose>-31.050 -7.799 33.544 0.000 0.000 0.000</pose>
       <static>false</static>
     </include>
+    <model name="EDGE_00000">
+      <static>true</static>
+      <link name="link">
+        <pose>-29.183 -2.167 37.512 0 1.182976 1.027554</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>10.936</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00001">
+      <static>true</static>
+      <link name="link">
+        <pose>1.250 32.733 36.149 0 1.345717 -1.446993</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>30.738</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00002">
+      <static>true</static>
+      <link name="link">
+        <pose>-3.183 42.100 36.149 0 1.056897 -2.009909</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>13.956</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00003">
+      <static>true</static>
+      <link name="link">
+        <pose>6.800 0.633 38.080 0 1.485900 1.782286</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>35.380</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00004">
+      <static>true</static>
+      <link name="link">
+        <pose>4.217 -4.867 38.080 0 1.458571 2.062448</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>26.788</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00005">
+      <static>true</static>
+      <link name="link">
+        <pose>0.796 -9.793 38.080 0 1.444917 2.529907</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>23.895</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00006">
+      <static>true</static>
+      <link name="link">
+        <pose>-23.983 31.500 37.651 0 1.328945 -0.025581</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>16.107</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00007">
+      <static>true</static>
+      <link name="link">
+        <pose>-23.983 27.333 37.651 0 1.358614 -0.509449</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>18.318</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00008">
+      <static>true</static>
+      <link name="link">
+        <pose>-26.740 20.310 37.651 0 1.417249 -1.152701</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>25.223</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00009">
+      <static>true</static>
+      <link name="link">
+        <pose>-29.183 16.933 37.651 0 1.442881 -1.395416</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>30.240</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00010">
+      <static>true</static>
+      <link name="link">
+        <pose>1.250 20.233 35.407 0 0.623917 -0.907320</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>10.284</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00011">
+      <static>true</static>
+      <link name="link">
+        <pose>-3.183 29.600 35.407 0 1.060855 1.924338</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>17.098</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00012">
+      <static>true</static>
+      <link name="link">
+        <pose>-8.383 26.950 35.407 0 1.133059 2.631952</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>19.689</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00013">
+      <static>true</static>
+      <link name="link">
+        <pose>-8.383 22.783 35.407 0 1.078761 3.118042</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>17.667</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00014">
+      <static>true</static>
+      <link name="link">
+        <pose>-1.333 14.733 35.407 0 1.084857 -1.663748</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>17.870</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00015">
+      <static>true</static>
+      <link name="link">
+        <pose>-18.890 -4.890 34.441 0 1.221096 1.770117</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>29.994</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00016">
+      <static>true</static>
+      <link name="link">
+        <pose>-21.333 -8.267 34.441 0 1.156113 2.035721</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>25.506</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00017">
+      <static>true</static>
+      <link name="link">
+        <pose>-12.504 -10.843 34.441 0 1.034305 1.141548</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>20.106</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00018">
+      <static>true</static>
+      <link name="link">
+        <pose>-10.933 38.100 36.381 0 1.034420 -0.282555</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>12.518</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00019">
+      <static>true</static>
+      <link name="link">
+        <pose>-16.133 35.450 36.381 0 0.914180 -1.578828</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>10.479</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00020">
+      <static>true</static>
+      <link name="link">
+        <pose>-16.133 18.783 34.698 0 0.708543 1.578764</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>12.858</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00021">
+      <static>true</static>
+      <link name="link">
+        <pose>-18.890 11.760 34.698 0 0.684093 -2.347349</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>12.598</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00022">
+      <static>true</static>
+      <link name="link">
+        <pose>-9.083 10.733 34.698 0 1.023557 -0.503663</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>18.763</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00023">
+      <static>true</static>
+      <link name="link">
+        <pose>-12.504 5.807 34.698 0 1.096145 -1.182595</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>21.362</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00024">
+      <static>true</static>
+      <link name="link">
+        <pose>-16.167 27.133 39.580 0 1.570796 -1.570796</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>8.333</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00025">
+      <static>true</static>
+      <link name="link">
+        <pose>-24.123 5.544 39.580 0 1.570796 -2.197167</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>8.337</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00026">
+      <static>true</static>
+      <link name="link">
+        <pose>-10.967 33.950 39.580 0 1.570796 -2.670282</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>11.673</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00027">
+      <static>true</static>
+      <link name="link">
+        <pose>-5.487 1.940 39.580 0 1.570796 -2.177685</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>11.995</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00028">
+      <static>true</static>
+      <link name="link">
+        <pose>0.517 12.367 39.580 0 1.570796 -2.009909</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>12.153</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00029">
+      <static>true</static>
+      <link name="link">
+        <pose>-18.923 15.944 39.580 0 1.570796 -1.944812</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>15.089</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00030">
+      <static>true</static>
+      <link name="link">
+        <pose>-15.294 2.967 39.580 0 1.570796 -0.750403</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>17.462</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
+    <model name="EDGE_00031">
+      <static>true</static>
+      <link name="link">
+        <pose>-9.117 14.917 39.580 0 1.570796 -0.851527</pose>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>2.000</radius>
+              <length>21.401</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.300 1.000 1.000 0.350</ambient>
+            <diffuse>0.300 1.000 1.000 0.350</diffuse>
+            <emissive>0.300 1.000 1.000 0.350</emissive>
+          </material>
+          <transparency>0.65</transparency>
+          <cast_shadows>false</cast_shadows>
+        </visual>
+      </link>
+    </model>
     <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so">
       <ros>
         <namespace>gazebo</namespace>
