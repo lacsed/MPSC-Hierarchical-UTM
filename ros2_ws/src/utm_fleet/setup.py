@@ -19,8 +19,9 @@ setup(
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': [
-            'utm_fleet_demo = utm_fleet.fleet_controller:main',
-        ],
-    },
+    "console_scripts": [
+        "utm_fleet_demo = utm_fleet.fleet_controller:main",
+        "utm_fleet_tester = utm_fleet.fleet_tester:main",
+    ],
+},
 )
