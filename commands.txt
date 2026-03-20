@@ -11,7 +11,7 @@ export GAZEBO_PLUGIN_PATH="/opt/ros/galactic/lib:${GAZEBO_PLUGIN_PATH}"
 gazebo --pause --verbose utm_world.sdf
 
 
-finishes gazebo
+# finishes gazebo
 pkill -f gzserver || true
 pkill -f gzclient || true
 pkill -f gazebo   || true
@@ -53,13 +53,21 @@ defros2
 source install/setup.bash
 
 ## Run the fleet demo using the generated graph files
-ros2 run utm_fleet utm_fleet_demo \
+ros2 run utm_fleet fleet_controller \
   --nodes /home/mploures/MPSC-Hierarchical-UTM/scripts/gz_world_out/graph_nodes.csv \
   --edges /home/mploures/MPSC-Hierarchical-UTM/scripts/gz_world_out/graph_edges.csv \
-  --rate 10 \
-  --speed 4.0 \
+  --rate 20 \
+  --speed 3.0 \
   --vspeed 1.0 \
-  --set-service /gazebo/set_entity_state
+  --tol 0.25 \
+  --clearance 0.0 \
+  --alt-spread 1.0 \
+  --set-service /gazebo/set_entity_state \
+  --seed 7 \
+  --planning-horizon 10 \
+  --work-time 2.0 \
+  --charge-time 5.0 \
+  --low-batt-threshold 0.40
 
 
 # Terminal 3
@@ -73,3 +81,11 @@ ros2 run utm_fleet utm_fleet_tester \
   --edges /home/mploures/MPSC-Hierarchical-UTM/scripts/gz_world_out/graph_edges.csv \
   --p-work 0.25
 
+defros2
+ros2 topic pub /task std_msgs/msg/String "{data: 'T1:SUPPLIER_000,CLIENT_000'}" --once
+ros2 topic pub /task std_msgs/msg/String "{data: 'T2:SUPPLIER_001,CLIENT_001'}" --once
+ros2 topic pub /task std_msgs/msg/String "{data: 'T3:SUPPLIER_000,CLIENT_000'}" --once
+ros2 topic pub /task std_msgs/msg/String "{data: 'T4:SUPPLIER_001,CLIENT_002'}" --once
+ros2 topic pub /task std_msgs/msg/String "{data: 'T5:SUPPLIER_000,CLIENT_000'}" --once
+ros2 topic pub /task std_msgs/msg/String "{data: 'T6:SUPPLIER_001,CLIENT_001'}" --once
+ros2 topic pub /task std_msgs/msg/String "{data: 'T7:SUPPLIER_000,CLIENT_000'}" --once

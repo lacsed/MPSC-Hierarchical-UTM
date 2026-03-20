@@ -284,6 +284,28 @@ def main(
         assignment_sid_pairs=best_assignment,
         ll_tree_local=best_ll_tree,
     )
+
+    role_bgr = {
+        "vertiport": (0, 0, 255),      # red
+        "supplier": (0, 255, 0),        # green
+        "client": (0, 165, 255),        # orange
+        "charging": (255, 80, 0),       # blue
+    }
+    img_special = img.copy()
+    # Draw building outlines (optional, but helps context)
+    for _, x, y, w, h in boxes:
+        cv2.rectangle(img_special, (int(x), int(y)), (int(x + w), int(y + h)), (70, 70, 70), 1)
+    # Draw special nodes
+    for sp in specials:
+        cx, cy = int(sp["px"]), int(sp["py"])
+        role = sp["role"]
+        color = role_bgr.get(role, (0, 0, 255))
+        cv2.circle(img_special, (cx, cy), 9, color, -1)
+    # Save the image
+    special_nodes_path = os.path.join(out_dir, "special_nodes_colored.png")
+    cv2.imwrite(special_nodes_path, img_special)
+    print(f"Special nodes image saved: {special_nodes_path}")
+    
     logger.info(f"Debug PNG saved: {dbg_path}")
 
     node_rows = []
