@@ -22,18 +22,21 @@ class FleetTester(Node):
     """
     Event generator for the fleet simulator.
     Publishes commands on /event and tracks completion via the same topic.
-    Event format expected by UAVHardware:
+
+    Event format expected by the current UAVHardware / GenericUAVModel:
 
       edge_take::<U>::<V>_<id>
-      work_start::<NODE>_<id>
+      work_start::<NODE>::SUPPLIER_<id>
+      work_start::<NODE>::CLIENT_<id>
       charge_start::<NODE>_<id>
 
-    Completion events produced by UAVHardware that we track:
+    Completion events tracked here:
 
       edge_release::<U>::<V>_<id>
-      work_end::<NODE>_<id>
+      work_end::<NODE>::SUPPLIER_<id>
+      work_end::<NODE>::CLIENT_<id>
       charge_end::<NODE>_<id>
-      battery_low_<id> / battery_empty_<id> / crashed_<id> (ignored for busy flag)
+      battery_low_<id>   (ignored for busy flag)
     """
 
     def __init__(self, nodes_csv, edges_csv, p_work=0.25, p_charge=0.15, rate_hz=2.0, seed=7):
@@ -71,19 +74,38 @@ class FleetTester(Node):
             f"rate={rate_hz}Hz"
         )
 
+    def _node_kind(self, node_id):
+        rec = self.graph_data.nodes.get(node_id)
+        if rec is not None:
+            try:
+                return str(rec.node_type.value).upper()
+            except Exception:
+                pass
+
+        u = str(node_id).upper()
+        if ("SUPPLIER" in u) or ("FORNECEDOR" in u):
+            return "SUPPLIER"
+        if ("CLIENT" in u) or ("CLIENTE" in u):
+            return "CLIENT"
+        if ("CHARG" in u) or ("ESTACAO" in u) or ("STATION" in u):
+            return "STATION"
+        if "VERTIPORT" in u:
+            return "VERTIPORT"
+        return "NORMAL"
+
     def _infer_work_nodes(self):
         out = []
         for nid in self.graph_data.nodes.keys():
-            u = str(nid).upper()
-            if ("SUPPLIER" in u) or ("CLIENT" in u) or ("FORNECEDOR" in u) or ("CLIENTE" in u):
+            k = self._node_kind(nid)
+            if k in ("SUPPLIER", "CLIENT"):
                 out.append(nid)
         return out
 
     def _infer_charge_nodes(self):
         out = []
         for nid in self.graph_data.nodes.keys():
-            u = str(nid).upper()
-            if ("CHARG" in u) or ("ESTACAO" in u) or ("STATION" in u):
+            k = self._node_kind(nid)
+            if k == "STATION":
                 out.append(nid)
         return out
 
@@ -91,7 +113,10 @@ class FleetTester(Node):
         return f"edge_take::{u}::{v}_{agent_id}"
 
     def _ev_start_work(self, node_id, agent_id):
-        return f"work_start::{node_id}_{agent_id}"
+        kind = self._node_kind(node_id)
+        if kind not in ("SUPPLIER", "CLIENT"):
+            raise ValueError(f"Node '{node_id}' is not a valid work node.")
+        return f"work_start::{node_id}::{kind}_{agent_id}"
 
     def _ev_start_charge(self, node_id, agent_id):
         return f"charge_start::{node_id}_{agent_id}"
@@ -119,20 +144,21 @@ class FleetTester(Node):
         if agent_id not in self.agent_node:
             return
 
-        # Movement completion: edge_release::<U>::<V>_<id>
         if base.startswith("edge_release::"):
             rest = base.split("edge_release::", 1)[1]
             parts = rest.split("::")
             if len(parts) == 2:
-                u = parts[0]
+                _u = parts[0]
                 v = parts[1]
                 self.agent_node[agent_id] = v
                 self.agent_busy[agent_id] = False
             return
 
-        # Local action completion: work_end / charge_end
         if base.startswith("work_end::") or base.startswith("charge_end::"):
             self.agent_busy[agent_id] = False
+            return
+
+        if base == "battery_low":
             return
 
     def _tick(self):
@@ -147,7 +173,6 @@ class FleetTester(Node):
             if curr is None:
                 continue
 
-            # Local actions
             if self.work_nodes and (curr in self.work_nodes) and (random.random() < self.p_work):
                 self._publish(self._ev_start_work(curr, agent_id))
                 self.agent_busy[agent_id] = True
@@ -158,7 +183,6 @@ class FleetTester(Node):
                 self.agent_busy[agent_id] = True
                 continue
 
-            # Move along graph
             succ = list(self.G.successors(curr)) if hasattr(self.G, "successors") else []
             if not succ:
                 succ = list(self.G.neighbors(curr))
