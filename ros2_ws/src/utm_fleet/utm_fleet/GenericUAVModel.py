@@ -143,7 +143,17 @@ class GenericUAVModel:
         for n in self.G.nodes():
             n = str(n)
             knd = self._kind(n)
+            if knd == "SUPPLIER" or knd == "CLIENT":
+                insps=f"inspec_start::{n}::{knd}"
+                inspe=f"inspec_end::{n}::{knd}"
+                if insps not in E:
+                        E[ws] = event(insps, controllable=True)
+                if inspe not in E:
+                        E[we] = event(inspe, controllable=False)
+                        
             if knd == "SUPPLIER":
+                insps=f"inspec_start::{n}::SUPPLIER"
+                inspe=f"inspec_end::{n}::SUPPLIER"
                 ws = f"work_start::{n}::SUPPLIER"
                 we = f"work_end::{n}::SUPPLIER"
                 if ws not in E:
@@ -220,6 +230,15 @@ class GenericUAVModel:
         for n in self.G.nodes():
             n = str(n)
             knd = self._kind(n)
+
+            if knd == "SUPPLIER" or knd == "CLIENT":
+                insps=self.ev(f"inspec_start::{n}::{knd}")
+                inspe=self.ev(f"inspec_end::{n}::{knd}")
+                Inspec = state(f"MODE_INSPEC::{n}")
+                trs.append((Normal, insps, Inspec))
+                trs.append((Inspec, inspe, Normal))
+
+
             if knd == "SUPPLIER":
                 Working = state(f"MODE_WORK_SUPPLIER::{n}")
                 ws = self.ev(f"work_start::{n}::SUPPLIER")

@@ -22,6 +22,7 @@ setup(
     "console_scripts": [
         "fleet_controller = utm_fleet.fleet_controller:main",
         "utm_fleet_tester = utm_fleet.fleet_tester:main",
+        "utm_supervisor = utm_fleet.utm_supervisor:main",
     ],
 },
 )

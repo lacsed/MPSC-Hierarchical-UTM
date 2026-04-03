@@ -1266,6 +1266,102 @@ def build_skeleton_graph(skel01):
 
     return adj, pos
 
+def save_world_graph_white_png(
+    out_path,
+    map_bgr,
+    boxes,
+    special_nodes,
+    logical_sids_selected,
+    pos_skel,
+    assignment_sid_pairs,
+    ll_tree_local=None,
+):
+    img = np.full_like(map_bgr, 255)
+
+    for _, x, y, w, h in boxes:
+        cv2.rectangle(img, (int(x), int(y)), (int(x + w), int(y + h)), (200, 200, 200), 1)
+
+    BLACK = (0, 0, 0)
+
+    # base do "grafo do mundo": todos os nós conhecidos em cinza claro
+    for sid, (x, y) in pos_skel.items():
+        if sid not in logical_sids_selected:
+            cv2.circle(img, (int(x), int(y)), 2, (225, 225, 225), -1, lineType=cv2.LINE_AA)
+
+    if ll_tree_local is not None:
+        logical_sids = list(logical_sids_selected)
+        for (i, j) in ll_tree_local:
+            if i < 0 or j < 0 or i >= len(logical_sids) or j >= len(logical_sids):
+                continue
+            a = pos_skel[logical_sids[i]]
+            b = pos_skel[logical_sids[j]]
+            cv2.line(
+                img,
+                (int(round(a[0])), int(round(a[1]))),
+                (int(round(b[0])), int(round(b[1]))),
+                BLACK,
+                2,
+                lineType=cv2.LINE_AA,
+            )
+
+    for sp in special_nodes:
+        s_id = sp["id"]
+        cx, cy = float(sp["px"]), float(sp["py"])
+        if s_id in assignment_sid_pairs:
+            for sid_k in assignment_sid_pairs[s_id]:
+                ax, ay = pos_skel[sid_k]
+                cv2.line(
+                    img,
+                    (int(round(cx)), int(round(cy))),
+                    (int(round(ax)), int(round(ay))),
+                    BLACK,
+                    2,
+                    lineType=cv2.LINE_AA,
+                )
+
+    for sid in logical_sids_selected:
+        x, y = pos_skel[sid]
+        cv2.circle(img, (int(x), int(y)), 7, (160, 160, 160), -1, lineType=cv2.LINE_AA)
+
+    role_bgr = {
+        "vertiport": (0, 0, 255),
+        "supplier": (0, 255, 0),
+        "client": (0, 165, 255),
+        "charging": (255, 80, 0),
+    }
+    for sp in special_nodes:
+        cx, cy = float(sp["px"]), float(sp["py"])
+        role = sp.get("role", "")
+        cv2.circle(img, (int(cx), int(cy)), 9, role_bgr.get(role, (0, 0, 255)), -1, lineType=cv2.LINE_AA)
+
+    # recorta para manter apenas a região ocupada pelo grafo
+    pts = []
+
+    for sid in logical_sids_selected:
+        x, y = pos_skel[sid]
+        pts.append((float(x), float(y)))
+
+    for sp in special_nodes:
+        pts.append((float(sp["px"]), float(sp["py"])))
+
+    if pts:
+        xs = [p[0] for p in pts]
+        ys = [p[1] for p in pts]
+
+        margin = 20
+        h, w = img.shape[:2]
+
+        x0 = max(0, int(min(xs)) - margin)
+        y0 = max(0, int(min(ys)) - margin)
+        x1 = min(w, int(max(xs)) + margin)
+        y1 = min(h, int(max(ys)) + margin)
+
+        if x1 > x0 and y1 > y0:
+            img = img[y0:y1, x0:x1]
+
+    white_out_path = out_path.replace(".png", "_white.png")
+    cv2.imwrite(white_out_path, img)
+
 
 def save_graph_debug_png(
     out_path,
@@ -1323,3 +1419,14 @@ def save_graph_debug_png(
         cv2.circle(img, (int(cx), int(cy)), 9, role_bgr.get(role, (0, 0, 255)), -1)
 
     cv2.imwrite(out_path, img)
+
+    save_world_graph_white_png(
+        out_path,
+        map_bgr,
+        boxes,
+        special_nodes,
+        logical_sids_selected,
+        pos_skel,
+        assignment_sid_pairs,
+        ll_tree_local=ll_tree_local,
+    )
