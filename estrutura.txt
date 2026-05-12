@@ -1,0 +1,387 @@
+.
+├── commands.txt
+├── estrutura_raiz.txt
+├── estrutura.txt
+├── README.md
+├── ros2_ws
+│   ├── build
+│   │   ├── COLCON_IGNORE
+│   │   ├── utm_control
+│   │   │   ├── build
+│   │   │   │   └── lib
+│   │   │   │       └── utm_control
+│   │   │   │           ├── Graph.py
+│   │   │   │           ├── __init__.py
+│   │   │   │           ├── ProblemParameters.py
+│   │   │   │           └── ProblemSolver.py
+│   │   │   ├── colcon_build.rc
+│   │   │   ├── colcon_command_prefix_setup_py.sh
+│   │   │   ├── colcon_command_prefix_setup_py.sh.env
+│   │   │   ├── install.log
+│   │   │   ├── prefix_override
+│   │   │   │   ├── __pycache__
+│   │   │   │   │   └── sitecustomize.cpython-38.pyc
+│   │   │   │   └── sitecustomize.py
+│   │   │   └── utm_control.egg-info
+│   │   │       ├── dependency_links.txt
+│   │   │       ├── entry_points.txt
+│   │   │       ├── PKG-INFO
+│   │   │       ├── requires.txt
+│   │   │       ├── SOURCES.txt
+│   │   │       ├── top_level.txt
+│   │   │       └── zip-safe
+│   │   ├── utm_fleet
+│   │   │   ├── build
+│   │   │   │   └── lib
+│   │   │   │       └── utm_fleet
+│   │   │   │           ├── dispatch_hw.py
+│   │   │   │           ├── extract_automaton_matrices.py
+│   │   │   │           ├── fleet_controller.py
+│   │   │   │           ├── fleet_tester.py
+│   │   │   │           ├── GenericUAVModel.py
+│   │   │   │           ├── help_cost.py
+│   │   │   │           ├── __init__.py
+│   │   │   │           ├── milp_optimizer.py
+│   │   │   │           ├── SupervisorAgent.py
+│   │   │   │           ├── test_cost_engine.py
+│   │   │   │           └── uav_hardware.py
+│   │   │   ├── colcon_build.rc
+│   │   │   ├── colcon_command_prefix_setup_py.sh
+│   │   │   ├── colcon_command_prefix_setup_py.sh.env
+│   │   │   ├── install.log
+│   │   │   ├── prefix_override
+│   │   │   │   ├── __pycache__
+│   │   │   │   │   └── sitecustomize.cpython-38.pyc
+│   │   │   │   └── sitecustomize.py
+│   │   │   └── utm_fleet.egg-info
+│   │   │       ├── dependency_links.txt
+│   │   │       ├── entry_points.txt
+│   │   │       ├── PKG-INFO
+│   │   │       ├── requires.txt
+│   │   │       ├── SOURCES.txt
+│   │   │       ├── top_level.txt
+│   │   │       └── zip-safe
+│   │   └── utm_graph
+│   │       ├── build
+│   │       │   └── lib
+│   │       │       └── utm_graph
+│   │       │           ├── cli_dump.py
+│   │       │           ├── __init__.py
+│   │       │           ├── loader.py
+│   │       │           ├── models.py
+│   │       │           └── node_types.py
+│   │       ├── colcon_build.rc
+│   │       ├── colcon_command_prefix_setup_py.sh
+│   │       ├── colcon_command_prefix_setup_py.sh.env
+│   │       ├── install.log
+│   │       ├── prefix_override
+│   │       │   ├── __pycache__
+│   │       │   │   └── sitecustomize.cpython-38.pyc
+│   │       │   └── sitecustomize.py
+│   │       └── utm_graph.egg-info
+│   │           ├── dependency_links.txt
+│   │           ├── entry_points.txt
+│   │           ├── PKG-INFO
+│   │           ├── requires.txt
+│   │           ├── SOURCES.txt
+│   │           ├── top_level.txt
+│   │           └── zip-safe
+│   ├── install
+│   │   ├── COLCON_IGNORE
+│   │   ├── local_setup.bash
+│   │   ├── local_setup.ps1
+│   │   ├── local_setup.sh
+│   │   ├── _local_setup_util_ps1.py
+│   │   ├── _local_setup_util_sh.py
+│   │   ├── local_setup.zsh
+│   │   ├── setup.bash
+│   │   ├── setup.ps1
+│   │   ├── setup.sh
+│   │   ├── setup.zsh
+│   │   ├── utm_control
+│   │   │   ├── lib
+│   │   │   │   └── python3.8
+│   │   │   │       └── site-packages
+│   │   │   │           ├── utm_control
+│   │   │   │           │   ├── Graph.py
+│   │   │   │           │   ├── __init__.py
+│   │   │   │           │   ├── ProblemParameters.py
+│   │   │   │           │   ├── ProblemSolver.py
+│   │   │   │           │   └── __pycache__
+│   │   │   │           │       ├── Graph.cpython-38.pyc
+│   │   │   │           │       ├── __init__.cpython-38.pyc
+│   │   │   │           │       ├── ProblemParameters.cpython-38.pyc
+│   │   │   │           │       └── ProblemSolver.cpython-38.pyc
+│   │   │   │           └── utm_control-0.0.0-py3.8.egg-info
+│   │   │   │               ├── dependency_links.txt
+│   │   │   │               ├── entry_points.txt
+│   │   │   │               ├── PKG-INFO
+│   │   │   │               ├── requires.txt
+│   │   │   │               ├── SOURCES.txt
+│   │   │   │               ├── top_level.txt
+│   │   │   │               └── zip-safe
+│   │   │   └── share
+│   │   │       ├── ament_index
+│   │   │       │   └── resource_index
+│   │   │       │       └── packages
+│   │   │       │           └── utm_control
+│   │   │       ├── colcon-core
+│   │   │       │   └── packages
+│   │   │       │       └── utm_control
+│   │   │       └── utm_control
+│   │   │           ├── hook
+│   │   │           │   ├── ament_prefix_path.dsv
+│   │   │           │   ├── ament_prefix_path.ps1
+│   │   │           │   ├── ament_prefix_path.sh
+│   │   │           │   ├── pythonpath.dsv
+│   │   │           │   ├── pythonpath.ps1
+│   │   │           │   └── pythonpath.sh
+│   │   │           ├── package.bash
+│   │   │           ├── package.dsv
+│   │   │           ├── package.ps1
+│   │   │           ├── package.sh
+│   │   │           ├── package.xml
+│   │   │           └── package.zsh
+│   │   ├── utm_fleet
+│   │   │   ├── lib
+│   │   │   │   ├── python3.8
+│   │   │   │   │   └── site-packages
+│   │   │   │   │       ├── utm_fleet
+│   │   │   │   │       │   ├── dispatch_hw.py
+│   │   │   │   │       │   ├── extract_automaton_matrices.py
+│   │   │   │   │       │   ├── fleet_controller.py
+│   │   │   │   │       │   ├── fleet_tester.py
+│   │   │   │   │       │   ├── GenericUAVModel.py
+│   │   │   │   │       │   ├── help_cost.py
+│   │   │   │   │       │   ├── __init__.py
+│   │   │   │   │       │   ├── milp_optimizer.py
+│   │   │   │   │       │   ├── __pycache__
+│   │   │   │   │       │   │   ├── dispatch_hw.cpython-38.pyc
+│   │   │   │   │       │   │   ├── extract_automaton_matrices.cpython-38.pyc
+│   │   │   │   │       │   │   ├── fleet_controller.cpython-38.pyc
+│   │   │   │   │       │   │   ├── fleet_tester.cpython-38.pyc
+│   │   │   │   │       │   │   ├── GenericUAVModel.cpython-38.pyc
+│   │   │   │   │       │   │   ├── help_cost.cpython-38.pyc
+│   │   │   │   │       │   │   ├── __init__.cpython-38.pyc
+│   │   │   │   │       │   │   ├── milp_optimizer.cpython-38.pyc
+│   │   │   │   │       │   │   ├── SupervisorAgent.cpython-38.pyc
+│   │   │   │   │       │   │   ├── test_cost_engine.cpython-38.pyc
+│   │   │   │   │       │   │   └── uav_hardware.cpython-38.pyc
+│   │   │   │   │       │   ├── SupervisorAgent.py
+│   │   │   │   │       │   ├── test_cost_engine.py
+│   │   │   │   │       │   └── uav_hardware.py
+│   │   │   │   │       └── utm_fleet-0.0.0-py3.8.egg-info
+│   │   │   │   │           ├── dependency_links.txt
+│   │   │   │   │           ├── entry_points.txt
+│   │   │   │   │           ├── PKG-INFO
+│   │   │   │   │           ├── requires.txt
+│   │   │   │   │           ├── SOURCES.txt
+│   │   │   │   │           ├── top_level.txt
+│   │   │   │   │           └── zip-safe
+│   │   │   │   └── utm_fleet
+│   │   │   │       ├── fleet_controller
+│   │   │   │       ├── utm_fleet_tester
+│   │   │   │       └── utm_supervisor
+│   │   │   └── share
+│   │   │       ├── ament_index
+│   │   │       │   └── resource_index
+│   │   │       │       └── packages
+│   │   │       │           └── utm_fleet
+│   │   │       ├── colcon-core
+│   │   │       │   └── packages
+│   │   │       │       └── utm_fleet
+│   │   │       └── utm_fleet
+│   │   │           ├── hook
+│   │   │           │   ├── ament_prefix_path.dsv
+│   │   │           │   ├── ament_prefix_path.ps1
+│   │   │           │   ├── ament_prefix_path.sh
+│   │   │           │   ├── pythonpath.dsv
+│   │   │           │   ├── pythonpath.ps1
+│   │   │           │   └── pythonpath.sh
+│   │   │           ├── package.bash
+│   │   │           ├── package.dsv
+│   │   │           ├── package.ps1
+│   │   │           ├── package.sh
+│   │   │           ├── package.xml
+│   │   │           └── package.zsh
+│   │   └── utm_graph
+│   │       ├── lib
+│   │       │   ├── python3.8
+│   │       │   │   └── site-packages
+│   │       │   │       ├── utm_graph
+│   │       │   │       │   ├── cli_dump.py
+│   │       │   │       │   ├── __init__.py
+│   │       │   │       │   ├── loader.py
+│   │       │   │       │   ├── models.py
+│   │       │   │       │   ├── node_types.py
+│   │       │   │       │   └── __pycache__
+│   │       │   │       │       ├── cli_dump.cpython-38.pyc
+│   │       │   │       │       ├── __init__.cpython-38.pyc
+│   │       │   │       │       ├── loader.cpython-38.pyc
+│   │       │   │       │       ├── models.cpython-38.pyc
+│   │       │   │       │       └── node_types.cpython-38.pyc
+│   │       │   │       └── utm_graph-0.1.0-py3.8.egg-info
+│   │       │   │           ├── dependency_links.txt
+│   │       │   │           ├── entry_points.txt
+│   │       │   │           ├── PKG-INFO
+│   │       │   │           ├── requires.txt
+│   │       │   │           ├── SOURCES.txt
+│   │       │   │           ├── top_level.txt
+│   │       │   │           └── zip-safe
+│   │       │   └── utm_graph
+│   │       │       └── utm_graph_dump
+│   │       └── share
+│   │           ├── ament_index
+│   │           │   └── resource_index
+│   │           │       └── packages
+│   │           │           └── utm_graph
+│   │           ├── colcon-core
+│   │           │   └── packages
+│   │           │       └── utm_graph
+│   │           └── utm_graph
+│   │               ├── hook
+│   │               │   ├── ament_prefix_path.dsv
+│   │               │   ├── ament_prefix_path.ps1
+│   │               │   ├── ament_prefix_path.sh
+│   │               │   ├── pythonpath.dsv
+│   │               │   ├── pythonpath.ps1
+│   │               │   └── pythonpath.sh
+│   │               ├── package.bash
+│   │               ├── package.dsv
+│   │               ├── package.ps1
+│   │               ├── package.sh
+│   │               ├── package.xml
+│   │               └── package.zsh
+│   ├── log
+│   │   ├── build_2026-04-02_20-33-10
+│   │   │   ├── events.log
+│   │   │   ├── logger_all.log
+│   │   │   ├── utm_control
+│   │   │   │   ├── command.log
+│   │   │   │   ├── stderr.log
+│   │   │   │   ├── stdout.log
+│   │   │   │   ├── stdout_stderr.log
+│   │   │   │   └── streams.log
+│   │   │   ├── utm_fleet
+│   │   │   │   ├── command.log
+│   │   │   │   ├── stderr.log
+│   │   │   │   ├── stdout.log
+│   │   │   │   ├── stdout_stderr.log
+│   │   │   │   └── streams.log
+│   │   │   └── utm_graph
+│   │   │       ├── command.log
+│   │   │       ├── stderr.log
+│   │   │       ├── stdout.log
+│   │   │       ├── stdout_stderr.log
+│   │   │       └── streams.log
+│   │   ├── COLCON_IGNORE
+│   │   ├── latest -> latest_build
+│   │   └── latest_build -> build_2026-04-02_20-33-10
+│   └── src
+│       ├── utm_control
+│       │   ├── =
+│       │   ├── package.xml
+│       │   ├── resource
+│       │   │   └── utm_control
+│       │   ├── setup.cfg
+│       │   ├── setup.py
+│       │   ├── test
+│       │   │   ├── test_copyright.py
+│       │   │   ├── test_flake8.py
+│       │   │   └── test_pep257.py
+│       │   └── utm_control
+│       │       ├── Graph.py
+│       │       ├── __init__.py
+│       │       ├── ProblemParameters.py
+│       │       ├── ProblemSolver.py
+│       │       └── route_to_des_events.py
+│       ├── utm_fleet
+│       │   ├── package.xml
+│       │   ├── resource
+│       │   │   └── utm_fleet
+│       │   ├── setup.cfg
+│       │   ├── setup.py
+│       │   ├── test
+│       │   │   ├── test_copyright.py
+│       │   │   ├── test_flake8.py
+│       │   │   └── test_pep257.py
+│       │   ├── utm_fleet
+│       │   │   ├── dispatch_hw.py
+│       │   │   ├── extract_automaton_matrices.py
+│       │   │   ├── fleet_controller.py
+│       │   │   ├── fleet_tester.py
+│       │   │   ├── GenericUAVModel.py
+│       │   │   ├── help_cost.py
+│       │   │   ├── __init__.py
+│       │   │   ├── local_mpsc_optimizer.py
+│       │   │   ├── milp_optimizer.py
+│       │   │   ├── __pycache__
+│       │   │   │   ├── dispatch_hw.cpython-38.pyc
+│       │   │   │   ├── extract_automaton_matrices.cpython-38.pyc
+│       │   │   │   ├── fleet_controller.cpython-38.pyc
+│       │   │   │   ├── fleet_tester.cpython-38.pyc
+│       │   │   │   ├── GenericUAVModel.cpython-38.pyc
+│       │   │   │   ├── help_cost.cpython-38.pyc
+│       │   │   │   ├── __init__.cpython-38.pyc
+│       │   │   │   ├── milp_optimizer.cpython-38.pyc
+│       │   │   │   ├── SupervisorAgent.cpython-38.pyc
+│       │   │   │   ├── test_cost_engine.cpython-38.pyc
+│       │   │   │   └── uav_hardware.cpython-38.pyc
+│       │   │   ├── SupervisorAgent.py
+│       │   │   ├── test_cost_engine.py
+│       │   │   └── uav_hardware.py
+│       │   └── utm_supervisor.py
+│       └── utm_graph
+│           ├── package.xml
+│           ├── resource
+│           │   └── utm_graph
+│           ├── setup.cfg
+│           ├── setup.py
+│           ├── test
+│           │   ├── test_copyright.py
+│           │   ├── test_flake8.py
+│           │   └── test_pep257.py
+│           └── utm_graph
+│               ├── cli_dump.py
+│               ├── __init__.py
+│               ├── loader.py
+│               ├── models.py
+│               ├── node_types.py
+│               └── __pycache__
+│                   ├── cli_dump.cpython-38.pyc
+│                   ├── __init__.cpython-38.pyc
+│                   ├── loader.cpython-38.pyc
+│                   ├── models.cpython-38.pyc
+│                   └── node_types.cpython-38.pyc
+└── scripts
+    ├── assets
+    │   └── finalmap.png
+    ├── city_gen.py
+    ├── gen_world_from_image_gz.py
+    ├── graph2d.py
+    ├── gz_world_out
+    │   ├── finalmap.png
+    │   ├── graph_debug.png
+    │   ├── graph_debug_triangles.png
+    │   ├── graph_debug_white.png
+    │   ├── graph_edges.csv
+    │   ├── graph_nodes.csv
+    │   ├── heightmap.png
+    │   ├── mask_building.png
+    │   ├── mask_park.png
+    │   ├── mask_roads.png
+    │   ├── materials
+    │   │   ├── model.config
+    │   │   ├── model.sdf
+    │   │   ├── scripts
+    │   │   │   └── utm.material
+    │   │   └── textures
+    │   │       └── finalmap.png
+    │   ├── roads_skeleton.png
+    │   ├── special_nodes_colored.png
+    │   └── utm_world.sdf
+    └── __pycache__
+        ├── city_gen.cpython-38.pyc
+        └── graph2d.cpython-38.pyc
+
+100 directories, 284 files

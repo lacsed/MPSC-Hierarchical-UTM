@@ -19,6 +19,13 @@ pkill -9 -f gzserver
 pkill -9 -f gzclient
 pkill -9 -f ros2
 
+sudo pkill -f gzserver || true
+sudo pkill -f gzclient || true
+sudo pkill -f gazebo   || true
+sudo pkill -9 -f gzserver
+sudo pkill -9 -f gzclient
+sudo pkill -9 -f ros2
+
 
 # Terminal 1
 
@@ -46,29 +53,14 @@ ros2 launch gazebo_ros gazebo.launch.py \
 
 
 # Terminal 2
-
-##Load ROS 2 workspace environment
 cd ~/MPSC-Hierarchical-UTM/ros2_ws
 defros2
 source install/setup.bash
 
-## Run the fleet demo using the generated graph files
-ros2 run utm_fleet fleet_controller \
+ros2 run utm_fleet utm_supervisor \
   --nodes /home/mploures/MPSC-Hierarchical-UTM/scripts/gz_world_out/graph_nodes.csv \
   --edges /home/mploures/MPSC-Hierarchical-UTM/scripts/gz_world_out/graph_edges.csv \
-  --rate 20 \
-  --speed 3.0 \
-  --vspeed 1.0 \
-  --tol 0.25 \
-  --clearance 0.0 \
-  --alt-spread 1.0 \
-  --set-service /gazebo/set_entity_state \
-  --seed 7 \
-  --planning-horizon 10 \
-  --work-time 2.0 \
-  --charge-time 5.0 \
-  --low-batt-threshold 0.40
-
+  --mutex-vertices all_except_vertiport 
 
 # Terminal 3
 
@@ -76,16 +68,43 @@ cd ~/MPSC-Hierarchical-UTM/ros2_ws
 defros2
 source install/setup.bash
 
-ros2 run utm_fleet utm_fleet_tester \
+ros2 run utm_fleet fleet_controller \
   --nodes /home/mploures/MPSC-Hierarchical-UTM/scripts/gz_world_out/graph_nodes.csv \
   --edges /home/mploures/MPSC-Hierarchical-UTM/scripts/gz_world_out/graph_edges.csv \
-  --p-work 0.25
+  --rate 8 \
+  --speed 5.0 \
+  --vspeed 3.0 \
+  --tol 0.25 \
+  --clearance 0.0 \
+  --alt-spread 1.0 \
+  --set-service /gazebo/set_entity_state \
+  --seed 7 \
+  --planning-horizon 8 \
+  --work-time 2.0 \
+  --charge-time 5.0 \
+  --low-batt-threshold 0.40
 
+
+
+# Terminal 3
+cd ~/MPSC-Hierarchical-UTM/ros2_ws
 defros2
-ros2 topic pub /task std_msgs/msg/String "{data: 'T1:SUPPLIER_000,CLIENT_000'}" --once
-ros2 topic pub /task std_msgs/msg/String "{data: 'T2:SUPPLIER_001,CLIENT_001'}" --once
-ros2 topic pub /task std_msgs/msg/String "{data: 'T3:SUPPLIER_000,CLIENT_000'}" --once
-ros2 topic pub /task std_msgs/msg/String "{data: 'T4:SUPPLIER_001,CLIENT_002'}" --once
-ros2 topic pub /task std_msgs/msg/String "{data: 'T5:SUPPLIER_000,CLIENT_000'}" --once
-ros2 topic pub /task std_msgs/msg/String "{data: 'T6:SUPPLIER_001,CLIENT_001'}" --once
-ros2 topic pub /task std_msgs/msg/String "{data: 'T7:SUPPLIER_000,CLIENT_000'}" --once
+source install/setup.bash
+
+ros2 topic pub /task_todo std_msgs/msg/String "{data: 'SUPPLIER_000,CLIENT_000'}" --once
+ros2 topic pub /task_todo std_msgs/msg/String "{data: 'SUPPLIER_001,CLIENT_001'}" --once
+ros2 topic pub /task_todo std_msgs/msg/String "{data: 'SUPPLIER_000,CLIENT_002'}" --once
+ros2 topic pub /task_todo std_msgs/msg/String "{data: 'SUPPLIER_001,CLIENT_003'}" --once
+ros2 topic pub /task_todo std_msgs/msg/String "{data: 'SUPPLIER_000,CLIENT_001'}" --once
+ros2 topic pub /task_todo std_msgs/msg/String "{data: 'SUPPLIER_001,CLIENT_000'}" --once
+ros2 topic pub /task_todo std_msgs/msg/String "{data: 'SUPPLIER_000,CLIENT_003'}" --once
+ros2 topic pub /task_todo std_msgs/msg/String "{data: 'SUPPLIER_001,CLIENT_002'}" --once
+
+
+# Terminal monitoramento
+
+cd ~/MPSC-Hierarchical-UTM/ros2_ws
+defros2
+source install/setup.bash
+
+ros2 topic echo /utm/occupancy
