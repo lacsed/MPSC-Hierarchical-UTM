@@ -1,4 +1,5 @@
 import math
+import time
 from dataclasses import dataclass
 
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist
@@ -84,6 +85,13 @@ class UAVHardware:
         snap_on_move=True,
         local_event_callback=None,
         battery_log_period_s=0.0,
+
+        # Gazebo pose-update protection.
+        # This prevents visual flickering caused by flooding
+        # /gazebo/set_entity_state with async service calls.
+        pose_rate_hz=10.0,
+        pose_precision=4,
+        resend_idle_pose_s=1.0,
     ):
         self.node = node
         self.entity_name = str(entity_name)
@@ -114,6 +122,8 @@ class UAVHardware:
         self._last_batt_ts = self._now()
         self._battery_log_period_s = float(battery_log_period_s)
         self._last_battery_log_ts = self._last_batt_ts
+        self._skip_battery_update_once = False
+        self.vertiport_nodes = set()
 
         self.ground_z = float(ground_z)
         self.g = float(g_mps2)
@@ -157,6 +167,20 @@ class UAVHardware:
         self._action_duration_s = 0.0
         self._action_end_event_base = None
 
+        # --------------------------------------------------------------
+        # Gazebo SetEntityState back-pressure
+        # --------------------------------------------------------------
+        self.pose_rate_hz = max(1e-6, float(pose_rate_hz))
+        self._pose_period_wall_s = 1.0 / self.pose_rate_hz
+        self._pose_precision = int(pose_precision)
+        self._resend_idle_pose_s = max(0.0, float(resend_idle_pose_s))
+
+        self._pose_future = None
+        self._last_pose_wall_s = -1e30
+        self._last_forced_idle_pose_wall_s = -1e30
+        self._last_sent_pose_key = None
+        self._last_pose_error_log_wall_s = -1e30
+
     # ------------------------------------------------------------------
     # public status API
     # ------------------------------------------------------------------
@@ -173,12 +197,70 @@ class UAVHardware:
     def current_node_id(self):
         return self.current_node
 
+    def _is_vertiport_node(self, node_id):
+        node_id = str(node_id)
+        return node_id in getattr(self, "vertiport_nodes", set()) or "VERTIPORT" in node_id.upper()
+
     def restore_full_battery(self):
         self.soc = 1.0
         self._low_batt_sent = False
         self._last_batt_ts = self._now()
 
-    def send_pose(self):
+    def send_pose(self, force=False):
+        """
+        Send UAV pose to Gazebo with throttling and back-pressure.
+
+        The previous implementation called call_async() at every timer tick.
+        With several UAVs, that can accumulate pending SetEntityState requests,
+        making Gazebo display old poses late. This appears visually as flickering,
+        blinking, or delayed movement.
+        """
+        now_wall = time.monotonic()
+
+        # If the previous async call is still pending, do not enqueue another one.
+        if self._pose_future is not None:
+            if not self._pose_future.done():
+                return
+
+            # Consume completed future and log errors at low frequency.
+            try:
+                self._pose_future.result()
+            except Exception as exc:
+                if now_wall - self._last_pose_error_log_wall_s > 1.0:
+                    self._last_pose_error_log_wall_s = now_wall
+                    try:
+                        self.node.get_logger().warning(
+                            "agent=%d SetEntityState failed for entity='%s': %s"
+                            % (self.agent_id, self.entity_name, str(exc))
+                        )
+                    except Exception:
+                        pass
+            finally:
+                self._pose_future = None
+
+        pose_key = (
+            round(float(self.x), self._pose_precision),
+            round(float(self.y), self._pose_precision),
+            round(float(self.z), self._pose_precision),
+            round(float(self.yaw), self._pose_precision),
+        )
+
+        pose_changed = pose_key != self._last_sent_pose_key
+
+        # While idle, avoid repeatedly sending the exact same pose.
+        if self.mode == "IDLE" and not pose_changed and not force:
+            if self._resend_idle_pose_s <= 0.0:
+                return
+
+            if now_wall - self._last_forced_idle_pose_wall_s < self._resend_idle_pose_s:
+                return
+
+            self._last_forced_idle_pose_wall_s = now_wall
+
+        # Global rate limit.
+        if not force and (now_wall - self._last_pose_wall_s) < self._pose_period_wall_s:
+            return
+
         pose = Pose()
         pose.position = Point(
             x=float(self.x),
@@ -195,7 +277,10 @@ class UAVHardware:
 
         req = SetEntityState.Request()
         req.state = state
-        self.cli_set.call_async(req)
+
+        self._pose_future = self.cli_set.call_async(req)
+        self._last_pose_wall_s = now_wall
+        self._last_sent_pose_key = pose_key
 
     # ------------------------------------------------------------------
     # public action API
@@ -244,6 +329,9 @@ class UAVHardware:
         self.mode = "MOVING"
         self.current_node = u
         self.z = max(self.z, self._az + self.clearance + self.alt_offset)
+
+        # Force one immediate pose update at the start of motion.
+        self.send_pose(force=True)
         return True
 
     def start_pick(self, provider_node):
@@ -301,7 +389,12 @@ class UAVHardware:
 
         if self.mode == "MOVING":
             v_meas, yaw_rate = self._move_step(dt)
-            self._battery_update(v_meas, yaw_rate, now)
+
+            if getattr(self, "_skip_battery_update_once", False):
+                self._skip_battery_update_once = False
+            else:
+                self._battery_update(v_meas, yaw_rate, now)
+
             self._check_battery_empty()
             self._battery_maybe_log(now)
             return
@@ -346,6 +439,11 @@ class UAVHardware:
                 z_tgt = float(nz) + self.clearance + self.alt_offset
                 self.z = move_towards(self.z, z_tgt, self.vspeed * dt)
 
+            if self._is_vertiport_node(self.current_node):
+                self.restore_full_battery()
+                self._battery_maybe_log(now)
+                return
+
             self._battery_update(0.0, 0.0, now)
             self._check_battery_empty()
             self._battery_maybe_log(now)
@@ -380,6 +478,8 @@ class UAVHardware:
     # ------------------------------------------------------------------
 
     def _move_step(self, dt):
+        old_edge_len = float(self.edge_len)
+
         v_des = self.speed
         self._v_cmd = move_towards(self._v_cmd, v_des, self.accel * dt)
 
@@ -407,9 +507,12 @@ class UAVHardware:
         z_tgt = float(z_ref) + self.clearance + self.alt_offset
         self.z = move_towards(self.z, z_tgt, self.vspeed * dt)
 
+        v_meas = (old_edge_len * (self.edge_s - s0)) / max(1e-6, dt)
+
         if self.edge_s >= 1.0 - 1e-9:
             self.x = float(self._bx)
             self.y = float(self._by)
+            self.z = float(self._bz) + self.clearance + self.alt_offset
             self.current_node = self.edge_v
 
             u = self.edge_u
@@ -422,9 +525,14 @@ class UAVHardware:
             self._v_cmd = 0.0
             self.mode = "IDLE"
 
+            if self._is_vertiport_node(v):
+                self.restore_full_battery()
+                self._skip_battery_update_once = True
+
+            # Force final pose before emitting completion.
+            self.send_pose(force=True)
             self._emit_uncontrollable(f"edge_release::{u}::{v}")
 
-        v_meas = (self.edge_len * (self.edge_s - s0)) / max(1e-6, dt)
         return v_meas, yaw_rate
 
     # ------------------------------------------------------------------

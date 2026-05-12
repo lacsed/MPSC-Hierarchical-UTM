@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 import threading
 import time
+import networkx as nx
 from typing import List, Optional, Set, Tuple
 
 from ultrades.automata import (
@@ -32,10 +33,12 @@ import time
 
 import rclpy
 from rclpy.executors import MultiThreadedExecutor
+from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.node import Node
 
 from gazebo_msgs.srv import SetEntityState
 from std_msgs.msg import String
+from utm_interfaces.srv import RequestEvent
 from .uav_hardware import *
 from .dispatch_hw import *
 
@@ -510,6 +513,80 @@ class SupervisorAgent:
         return True
 
     # ------------------------------------------------------------------
+    # return-to-base policy
+    # ------------------------------------------------------------------
+
+    def _return_phase_active(self, terminated_flags=None) -> bool:
+        if terminated_flags is None:
+            terminated_flags = list(self.terminated)
+        return bool(terminated_flags[0] and terminated_flags[1] and not terminated_flags[2])
+
+    def _next_return_event(self, state_obj=None) -> Optional[str]:
+        if state_obj is None:
+            state_obj = self._state
+
+        current = self._current_node_from_state(state_obj)
+        if current is None:
+            return None
+
+        if self.model._kind(current) == "VERTIPORT":
+            return None
+
+        bases = self._vertiport_nodes()
+        if not bases:
+            return None
+
+        enabled_id = set(self._enabled_events_from_state(state_obj))
+
+        with self._prohibited_lock:
+            prohibited_generic = set(self._prohibited_generic)
+
+        search_graph = nx.DiGraph()
+        search_graph.add_nodes_from(str(n) for n in self.model.G.nodes())
+
+        for u, v in self.model.G.edges():
+            u = str(u)
+            v = str(v)
+            ev = f"edge_take::{u}::{v}"
+
+            if ev not in self.model.events:
+                continue
+
+            if ev in prohibited_generic:
+                continue
+
+            search_graph.add_edge(u, v)
+
+        candidates = []
+
+        for base in bases:
+            try:
+                path = nx.shortest_path(search_graph, current, base)
+            except Exception:
+                continue
+
+            if len(path) < 2:
+                continue
+
+            nxt = str(path[1])
+            ev_gen = f"edge_take::{current}::{nxt}"
+            ev_id = self.to_id(ev_gen)
+
+            if ev_id is None:
+                continue
+
+            if ev_id not in enabled_id:
+                continue
+
+            candidates.append((len(path), base, nxt, ev_id))
+
+        if not candidates:
+            return None
+
+        candidates.sort(key=lambda x: (x[0], x[1], x[2], x[3]))
+        return candidates[0][3]
+
+    # ------------------------------------------------------------------
     # planning core
     # ------------------------------------------------------------------
 
@@ -523,6 +600,15 @@ class SupervisorAgent:
         self._update_dynamic_cost()
 
         plan_state, plan_flags = self._planning_snapshot()
+
+        if self._return_phase_active(plan_flags):
+            current = self._current_node_from_state(plan_state)
+            if current is not None and self.model._kind(current) == "VERTIPORT":
+                self.terminated[2] = True
+                return None
+
+            return self._next_return_event(plan_state)
+
         return self._plan_with_optimizer(
             state_obj=plan_state,
             terminated_flags=plan_flags,
@@ -560,6 +646,9 @@ class SupervisorAgent:
         enabled_predicted = set(self._enabled_events_from_state(state_obj))
 
         for ev_id in seq:
+            if str(ev_id).startswith(("inspec_start::", "inspec_end::")):
+                continue
+
             ev_obj = self._event_objects.get(ev_id)
             if ev_obj is None:
                 continue
@@ -646,6 +735,17 @@ class SupervisorAgent:
         _task_id, supplier, client = parsed
         out = []
         current = self._current_node_from_state(state_obj)
+
+        if terminated_flags[0] and terminated_flags[1] and not terminated_flags[2]:
+            seen = set()
+            for base in self._vertiport_nodes():
+                preds = set(str(x) for x in self.model.G.predecessors(base))
+                for u in preds:
+                    ev = f"edge_take::{u}::{base}"
+                    if ev in self.model.events and ev not in seen:
+                        seen.add(ev)
+                        out.append(ev)
+            return out
 
         if self._state_has_low_battery_in(state_obj):
             if current is not None and self.model._kind(current) == "STATION":
@@ -836,6 +936,17 @@ class UAVAgentNode(Node):
                 f"agent={self.agent_id} service not available: {set_state_service}"
             )
 
+        self._utm_client_group = ReentrantCallbackGroup()
+        self.cli_utm_req = self.create_client(
+            RequestEvent,
+            "/utm/request_event",
+            callback_group=self._utm_client_group,
+        )
+        if not self.cli_utm_req.wait_for_service(timeout_sec=10.0):
+            raise RuntimeError(
+                f"agent={self.agent_id} service not available: /utm/request_event"
+            )
+
         self.pub_event = self.create_publisher(String, "/event", 50)
         self.pub_task_claim = self.create_publisher(String, "/task_claims", 20)
 
@@ -883,6 +994,10 @@ class UAVAgentNode(Node):
             init_pose=init_pose,
             battery_log_period_s=float(battery_log_period_s),
             local_event_callback=None,
+        )
+        self.uav.vertiport_nodes = set(
+            str(n) for n in self.model.G.nodes()
+            if self.model._kind(n) == "VERTIPORT"
         )
         self.uav.send_pose()
 
@@ -1019,6 +1134,84 @@ class UAVAgentNode(Node):
     # dispatch
     # ------------------------------------------------------------------
 
+    def _needs_utm_authorization(self, ev: str) -> bool:
+        ev_gen = self.agent.to_generic(str(ev))
+        return ev_gen.startswith("edge_take::")
+
+    def _request_utm_authorization(self, ev: str) -> bool:
+        if not self._needs_utm_authorization(ev):
+            return True
+
+        if not self.cli_utm_req.service_is_ready():
+            if not self.cli_utm_req.wait_for_service(timeout_sec=2.0):
+                self.get_logger().warning(
+                    "UTM authorization service unavailable for '%s'" % str(ev)
+                )
+                return False
+
+        req = RequestEvent.Request()
+        req.agent_id = str(self.agent_id)
+        req.event = str(ev)
+        req.cancel = False
+
+        fut = self.cli_utm_req.call_async(req)
+        deadline = time.time() + 5.0
+
+        while rclpy.ok() and time.time() < deadline:
+            if fut.done():
+                break
+            time.sleep(0.002)
+
+        if not fut.done():
+            self.get_logger().warning(
+                "UTM authorization timeout for '%s'" % str(ev)
+            )
+            try:
+                self._cancel_utm_authorization(ev)
+            except Exception:
+                pass
+            return False
+
+        resp = fut.result()
+        if resp is None:
+            self.get_logger().warning(
+                "UTM authorization returned no response for '%s'" % str(ev)
+            )
+            return False
+
+        try:
+            self.agent.set_prohibited_events(list(resp.prohibited_events))
+        except Exception:
+            pass
+
+        if not bool(resp.accepted):
+            self.get_logger().info(
+                "UTM rejected '%s': %s" % (str(ev), str(resp.reason))
+            )
+            return False
+
+        return True
+
+    def _cancel_utm_authorization(self, ev: str) -> None:
+        if not self._needs_utm_authorization(ev):
+            return
+
+        if not self.cli_utm_req.service_is_ready():
+            return
+
+        req = RequestEvent.Request()
+        req.agent_id = str(self.agent_id)
+        req.event = str(ev)
+        req.cancel = True
+
+        fut = self.cli_utm_req.call_async(req)
+        deadline = time.time() + 1.0
+
+        while rclpy.ok() and time.time() < deadline:
+            if fut.done():
+                break
+            time.sleep(0.002)
+
     def _publish_event(self, ev):
         ev = str(ev or "").strip()
         if not ev:
@@ -1045,8 +1238,15 @@ class UAVAgentNode(Node):
             if ev is None:
                 return
 
+            auth_ok = self._request_utm_authorization(ev)
+            if not auth_ok:
+                self.agent.dispatch_failed(ev)
+                self.agent.request_plan(force=True)
+                return
+
             ok = dispatch_control_event_to_hardware(self.uav, ev)
             if not ok:
+                self._cancel_utm_authorization(ev)
                 self.get_logger().warning(
                     "agent=%d hardware rejected '%s'" % (self.agent_id, ev)
                 )

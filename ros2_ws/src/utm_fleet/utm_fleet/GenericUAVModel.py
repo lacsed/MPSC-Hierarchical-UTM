@@ -143,17 +143,7 @@ class GenericUAVModel:
         for n in self.G.nodes():
             n = str(n)
             knd = self._kind(n)
-            if knd == "SUPPLIER" or knd == "CLIENT":
-                insps=f"inspec_start::{n}::{knd}"
-                inspe=f"inspec_end::{n}::{knd}"
-                if insps not in E:
-                        E[ws] = event(insps, controllable=True)
-                if inspe not in E:
-                        E[we] = event(inspe, controllable=False)
-                        
             if knd == "SUPPLIER":
-                insps=f"inspec_start::{n}::SUPPLIER"
-                inspe=f"inspec_end::{n}::SUPPLIER"
                 ws = f"work_start::{n}::SUPPLIER"
                 we = f"work_end::{n}::SUPPLIER"
                 if ws not in E:
@@ -230,14 +220,6 @@ class GenericUAVModel:
         for n in self.G.nodes():
             n = str(n)
             knd = self._kind(n)
-
-            if knd == "SUPPLIER" or knd == "CLIENT":
-                insps=self.ev(f"inspec_start::{n}::{knd}")
-                inspe=self.ev(f"inspec_end::{n}::{knd}")
-                Inspec = state(f"MODE_INSPEC::{n}")
-                trs.append((Normal, insps, Inspec))
-                trs.append((Inspec, inspe, Normal))
-
 
             if knd == "SUPPLIER":
                 Working = state(f"MODE_WORK_SUPPLIER::{n}")
@@ -320,6 +302,16 @@ class GenericUAVModel:
                 trs.append((Low, cs, Ok))
                 trs.append((Ok, cs, Ok))
 
+        for b in self.G.nodes():
+            b = str(b)
+            if self._kind(b) == "VERTIPORT":
+                for u in set(str(x) for x in self.G.predecessors(b)):
+                    evn = f"edge_release::{u}::{b}"
+                    if evn in self.events:
+                        rel = self.ev(evn)
+                        trs.append((Low, rel, Ok))
+                        trs.append((Ok, rel, Ok))
+
         A = dfa(trs, Ok, "battery_policy")
         self.automata["battery_policy"] = accessible(A)
         self.specs.append(self.automata["battery_policy"])
@@ -364,12 +356,12 @@ class GenericUAVModel:
         for n in self.G.nodes():
             n = str(n)
             if self._kind(n) == "SUPPLIER":
-                trs.append((Base, self.ev(f"work_start::{n}::SUPPLIER"), Pick))
+                trs.append((Base, self.ev(f"work_end::{n}::SUPPLIER"), Pick))
 
         for n in self.G.nodes():
             n = str(n)
             if self._kind(n) == "CLIENT":
-                trs.append((Pick, self.ev(f"work_start::{n}::CLIENT"), Place))
+                trs.append((Pick, self.ev(f"work_end::{n}::CLIENT"), Place))
 
         for b in [str(n) for n in self.G.nodes() if self._kind(n) == "VERTIPORT"]:
             for u in set(str(x) for x in self.G.predecessors(b)):

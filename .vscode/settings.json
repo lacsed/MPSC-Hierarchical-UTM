@@ -6,5 +6,6 @@
         "/opt/ros/galactic/lib/python3.8/site-packages",
         "./ros2_ws/src/utm_control/utm_control/ ",
         "./ros2_ws/src/utm_control/utm_control/ "
-    ]
+    ],
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }

@@ -1,0 +1,7 @@
+string agent_id
+string event
+bool cancel
+---
+bool accepted
+string reason
+string[] prohibited_events
