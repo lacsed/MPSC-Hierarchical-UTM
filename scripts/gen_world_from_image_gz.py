@@ -2,7 +2,6 @@
 
 import os
 import math
-import random
 import shutil
 import argparse
 import logging
@@ -21,6 +20,21 @@ logger = logging.getLogger("gen_world_from_image_gz")
 OVERFLIGHT_MARGIN_M = 2.0
 LOGICAL_ABOVE_TALLEST = 5.0
 
+UAV_SCALE = 2.0
+CHANNEL_ALPHA = 0.18
+CHANNEL_RADIUS = 0.08
+
+UAV_COLORS_RGBA = [
+    (1.0, 0.0, 0.0, 1.0),      # red
+    (0.0, 0.2, 1.0, 1.0),      # blue
+    (0.0, 0.8, 0.1, 1.0),      # green
+    (1.0, 0.55, 0.0, 1.0),     # orange
+    (0.65, 0.0, 1.0, 1.0),     # purple
+    (0.0, 0.85, 0.85, 1.0),    # cyan
+    (1.0, 0.0, 0.65, 1.0),     # pink
+    (0.85, 0.85, 0.0, 1.0),    # yellow
+]
+
 
 def write_nodes_csv(path, node_rows):
     """Write graph nodes CSV."""
@@ -36,6 +50,272 @@ def write_edges_csv(path, edge_rows):
         f.write("src,dst\n")
         for a, b in edge_rows:
             f.write(f"{a},{b}\n")
+
+
+def rgba_text(rgba):
+    r, g, b, a = rgba
+    return f"{r:.4f} {g:.4f} {b:.4f} {a:.4f}"
+
+
+def safe_name(name):
+    return "".join(ch if ch.isalnum() or ch in ["_", "-"] else "_" for ch in str(name))
+
+
+def cylinder_pose_between_points(x1, y1, z1, x2, y2, z2):
+    """
+    Return pose and length for a cylinder connecting two 3D points.
+
+    Gazebo cylinders are aligned with the local z-axis.
+    """
+    dx = float(x2 - x1)
+    dy = float(y2 - y1)
+    dz = float(z2 - z1)
+
+    length = math.sqrt(dx * dx + dy * dy + dz * dz)
+    if length <= 1e-9:
+        return None
+
+    mx = 0.5 * (x1 + x2)
+    my = 0.5 * (y1 + y2)
+    mz = 0.5 * (z1 + z2)
+
+    horizontal = math.sqrt(dx * dx + dy * dy)
+
+    yaw = math.atan2(dy, dx)
+    pitch = math.atan2(horizontal, dz)
+    roll = 0.0
+
+    return mx, my, mz, roll, pitch, yaw, length
+
+
+def make_channel_sdf(name, x1, y1, z1, x2, y2, z2, radius=CHANNEL_RADIUS, alpha=CHANNEL_ALPHA):
+    """
+    Create a transparent channel as a Gazebo cylinder.
+    """
+    pose = cylinder_pose_between_points(x1, y1, z1, x2, y2, z2)
+    if pose is None:
+        return ""
+
+    mx, my, mz, roll, pitch, yaw, length = pose
+
+    name = safe_name(name)
+    alpha = max(0.0, min(1.0, float(alpha)))
+    transparency = 1.0 - alpha
+
+    rgba = rgba_text((0.10, 0.55, 1.00, alpha))
+
+    return f"""
+    <model name="{name}">
+      <static>true</static>
+      <pose>{mx:.6f} {my:.6f} {mz:.6f} {roll:.6f} {pitch:.6f} {yaw:.6f}</pose>
+      <link name="link">
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <transparency>{transparency:.6f}</transparency>
+          <geometry>
+            <cylinder>
+              <radius>{radius:.6f}</radius>
+              <length>{length:.6f}</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>{rgba}</ambient>
+            <diffuse>{rgba}</diffuse>
+            <specular>0.05 0.05 0.05 {alpha:.6f}</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+""".rstrip()
+
+
+def make_uav_sdf(vehicle_id, x, y, z, rgba, scale=UAV_SCALE):
+    """
+    Create a simple movable UAV model.
+
+    IMPORTANT:
+    The model name is exactly vehicle_id, e.g. VEHICLE_000.
+    This is required because the ROS/Gazebo controller calls SetEntityState
+    using this exact entity name.
+    """
+    vehicle_id = safe_name(vehicle_id)
+    color = rgba_text(rgba)
+
+    s = float(scale)
+
+    body_radius = 0.18 * s
+    body_length = 0.12 * s
+
+    arm_radius = 0.025 * s
+    arm_length = 0.95 * s
+
+    rotor_radius = 0.13 * s
+    rotor_length = 0.025 * s
+    rotor_offset = 0.48 * s
+
+    collision_radius = 0.14 * s
+    collision_length = 0.09 * s
+
+    mass = 1.0
+    ixx = 0.02 * s
+    iyy = 0.02 * s
+    izz = 0.04 * s
+
+    return f"""
+    <model name="{vehicle_id}">
+      <static>false</static>
+      <allow_auto_disable>false</allow_auto_disable>
+      <pose>{float(x):.6f} {float(y):.6f} {float(z):.6f} 0 0 0</pose>
+
+      <link name="base_link">
+        <gravity>false</gravity>
+        <self_collide>false</self_collide>
+
+        <inertial>
+          <mass>{mass:.6f}</mass>
+          <inertia>
+            <ixx>{ixx:.6f}</ixx>
+            <iyy>{iyy:.6f}</iyy>
+            <izz>{izz:.6f}</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+        </inertial>
+
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>{collision_radius:.6f}</radius>
+              <length>{collision_length:.6f}</length>
+            </cylinder>
+          </geometry>
+        </collision>
+
+        <visual name="body">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>{body_radius:.6f}</radius>
+              <length>{body_length:.6f}</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>{color}</ambient>
+            <diffuse>{color}</diffuse>
+            <specular>0.25 0.25 0.25 1.0</specular>
+          </material>
+        </visual>
+
+        <visual name="arm_x">
+          <pose>0 0 0 0 {math.pi / 2:.6f} 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>{arm_radius:.6f}</radius>
+              <length>{arm_length:.6f}</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>{color}</ambient>
+            <diffuse>{color}</diffuse>
+            <specular>0.25 0.25 0.25 1.0</specular>
+          </material>
+        </visual>
+
+        <visual name="arm_y">
+          <pose>0 0 0 {math.pi / 2:.6f} 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>{arm_radius:.6f}</radius>
+              <length>{arm_length:.6f}</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>{color}</ambient>
+            <diffuse>{color}</diffuse>
+            <specular>0.25 0.25 0.25 1.0</specular>
+          </material>
+        </visual>
+
+        <visual name="rotor_front">
+          <cast_shadows>false</cast_shadows>
+          <pose>{rotor_offset:.6f} 0 0.03 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>{rotor_radius:.6f}</radius>
+              <length>{rotor_length:.6f}</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.02 0.02 0.02 0.9</ambient>
+            <diffuse>0.02 0.02 0.02 0.9</diffuse>
+          </material>
+        </visual>
+
+        <visual name="rotor_back">
+          <cast_shadows>false</cast_shadows>
+          <pose>{-rotor_offset:.6f} 0 0.03 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>{rotor_radius:.6f}</radius>
+              <length>{rotor_length:.6f}</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.02 0.02 0.02 0.9</ambient>
+            <diffuse>0.02 0.02 0.02 0.9</diffuse>
+          </material>
+        </visual>
+
+        <visual name="rotor_left">
+          <cast_shadows>false</cast_shadows>
+          <pose>0 {rotor_offset:.6f} 0.03 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>{rotor_radius:.6f}</radius>
+              <length>{rotor_length:.6f}</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.02 0.02 0.02 0.9</ambient>
+            <diffuse>0.02 0.02 0.02 0.9</diffuse>
+          </material>
+        </visual>
+
+        <visual name="rotor_right">
+          <cast_shadows>false</cast_shadows>
+          <pose>0 {-rotor_offset:.6f} 0.03 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>{rotor_radius:.6f}</radius>
+              <length>{rotor_length:.6f}</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.02 0.02 0.02 0.9</ambient>
+            <diffuse>0.02 0.02 0.02 0.9</diffuse>
+          </material>
+        </visual>
+
+      </link>
+    </model>
+""".rstrip()
+
+
+def inject_models_before_world_close(sdf, model_blocks):
+    """
+    Insert custom models before </world>.
+    """
+    model_blocks = [m for m in model_blocks if m and m.strip()]
+    if not model_blocks:
+        return sdf
+
+    idx = sdf.rfind("</world>")
+    if idx < 0:
+        raise RuntimeError("Could not find </world> in generated SDF.")
+
+    insertion = "\n\n" + "\n\n".join(model_blocks) + "\n"
+    return sdf[:idx] + insertion + sdf[idx:]
 
 
 def main(
@@ -137,7 +417,7 @@ def main(
         special_min=26.0,
         special_max=35.0,
     )
-    
+
     tallest = float(max(building_heights))
     z_logical_final = tallest + float(LOGICAL_ABOVE_TALLEST)
     allow_overflight = (not no_overflight) and (z_logical_final >= tallest + OVERFLIGHT_MARGIN_M)
@@ -146,7 +426,6 @@ def main(
         f"Height stats: tallest={tallest:.2f}m | z_logical={z_logical_final:.2f}m | "
         f"z_special={z_special:.2f}m | z_vehicle={z_vehicle:.2f}m | overflight={'ON' if allow_overflight else 'OFF'}"
     )
-
 
     skel01 = g2d.skeletonize_roads(mask_roads)
     cv2.imwrite(os.path.join(out_dir, "roads_skeleton.png"), (skel01 * 255).astype(np.uint8))
@@ -197,8 +476,6 @@ def main(
     if max_deg_logical <= 2:
         raise RuntimeError("max_deg_logical must be >= 3 to allow LL connectivity.")
 
-    E_special = g2d.K_SPECIAL * Ns
-
     lower = max(2, (Ns + 1))
     max_M_default = min(len(candidate_logical_sids), max(lower, 4 * Ns))
     upper = 2 * max_M_default
@@ -233,7 +510,6 @@ def main(
             if res is None:
                 continue
 
-            
             assignment, deg_special_local = res
 
             ll_caps = [max_deg_logical - d for d in deg_special_local]
@@ -286,26 +562,25 @@ def main(
     )
 
     role_bgr = {
-        "vertiport": (0, 0, 255),      # red
-        "supplier": (0, 255, 0),        # green
-        "client": (0, 165, 255),        # orange
-        "charging": (255, 80, 0),       # blue
+        "vertiport": (0, 0, 255),
+        "supplier": (0, 255, 0),
+        "client": (0, 165, 255),
+        "charging": (255, 80, 0),
     }
     img_special = img.copy()
-    # Draw building outlines (optional, but helps context)
     for _, x, y, w, h in boxes:
         cv2.rectangle(img_special, (int(x), int(y)), (int(x + w), int(y + h)), (70, 70, 70), 1)
-    # Draw special nodes
+
     for sp in specials:
         cx, cy = int(sp["px"]), int(sp["py"])
         role = sp["role"]
         color = role_bgr.get(role, (0, 0, 255))
         cv2.circle(img_special, (cx, cy), 9, color, -1)
-    # Save the image
+
     special_nodes_path = os.path.join(out_dir, "special_nodes_colored.png")
     cv2.imwrite(special_nodes_path, img_special)
     print(f"Special nodes image saved: {special_nodes_path}")
-    
+
     logger.info(f"Debug PNG saved: {dbg_path}")
 
     node_rows = []
@@ -368,26 +643,14 @@ def main(
 
     city.write_stub_model_config(os.path.join(out_dir, "materials"), model_name="utm_materials_stub")
 
-    logical_markers = []
-    vehicle_markers = []
-    if spawn_markers:
-        for _sid, nid, xw, yw in logical_nodes_world:
-            logical_markers.append((nid, xw, yw, float(z_logical_final)))
-        for v in vehicles:
-            vehicle_markers.append((v["id"], v["x"], v["y"], float(v["z"])))
-
-    # Build lookup for node positions (world)
     node_pos = {}
 
-    # logical nodes
     for i, sid in enumerate(best_selected):
         px, py = pos_skel_ref[sid]
         xw, yw = city.px_to_world(px, py, W, H, resolution_m_per_px)
         nid = f"LOGICAL_{i:03d}"
         node_pos[nid] = (float(xw), float(yw), float(z_logical_final))
 
-    # specials + vehicles already computed earlier in your code:
-    # specials: sp["id"] etc.
     for sp in specials:
         bi = sp["bi"]
         xw, yw = city.px_to_world(sp["px"], sp["py"], W, H, resolution_m_per_px)
@@ -395,18 +658,45 @@ def main(
         sp_z = roof_z + float(z_special)
         node_pos[sp["id"]] = (float(xw), float(yw), float(sp_z))
 
-    # LL edges are created as (LOGICAL_i, LOGICAL_j) already in edge_rows,
-    # SL edges were appended as (special_id, logical_id).
-    edge_markers = []
-    edge_id = 0
-    for (a, b) in edge_rows:
-        if a not in node_pos or b not in node_pos:
-            continue
-        x1, y1, z1 = node_pos[a]
-        x2, y2, z2 = node_pos[b]
-        edge_markers.append((f"EDGE_{edge_id:05d}", x1, y1, z1, x2, y2, z2))
-        edge_id += 1
+    custom_models = []
 
+    if spawn_markers:
+        edge_id = 0
+        for (a, b) in edge_rows:
+            if a not in node_pos or b not in node_pos:
+                continue
+
+            x1, y1, z1 = node_pos[a]
+            x2, y2, z2 = node_pos[b]
+
+            custom_models.append(
+                make_channel_sdf(
+                    name=f"EDGE_{edge_id:05d}",
+                    x1=x1,
+                    y1=y1,
+                    z1=z1,
+                    x2=x2,
+                    y2=y2,
+                    z2=z2,
+                    radius=CHANNEL_RADIUS,
+                    alpha=CHANNEL_ALPHA,
+                )
+            )
+            edge_id += 1
+
+        for i, v in enumerate(vehicles):
+            color = UAV_COLORS_RGBA[i % len(UAV_COLORS_RGBA)]
+
+            custom_models.append(
+                make_uav_sdf(
+                    vehicle_id=v["id"],
+                    x=v["x"],
+                    y=v["y"],
+                    z=float(v["z"]),
+                    rgba=color,
+                    scale=UAV_SCALE,
+                )
+            )
 
     sdf = city.make_world_sdf(
         W_px=W,
@@ -416,12 +706,22 @@ def main(
         building_heights=building_heights,
         resolution_m_per_px=resolution_m_per_px,
         seed=seed,
-        logical_markers=logical_markers if spawn_markers else None,
-        vehicle_markers=vehicle_markers if spawn_markers else None,
+
+        # Não cria esferas amarelas dos nós lógicos.
+        logical_markers=None,
+
+        # Não cria veículos padrão, porque vamos criar modelos coloridos
+        # com os nomes corretos: VEHICLE_000, VEHICLE_001, etc.
+        vehicle_markers=None,
+
         park_models=park_models,
         vehicle_model_uri="model://quadrotor",
-        edge_markers=edge_markers,   
+
+        # Não cria canais padrão. Vamos injetar canais transparentes.
+        edge_markers=None,
     )
+
+    sdf = inject_models_before_world_close(sdf, custom_models)
 
     sdf_path = os.path.join(out_dir, "utm_world.sdf")
     with open(sdf_path, "w", encoding="utf-8") as f:
@@ -432,6 +732,10 @@ def main(
     print(f"  • Buildings: {len(boxes)} (special={len(roles_by_index)})")
     print(f"  • Tallest building: {tallest:.2f} m")
     print(f"  • Logical nodes Z: {z_logical_final:.2f} m (tallest + {LOGICAL_ABOVE_TALLEST})")
+    print(f"  • Logical node spheres in Gazebo: OFF")
+    print(f"  • UAV model names preserved: VEHICLE_000, VEHICLE_001, ...")
+    print(f"  • UAV scale: {UAV_SCALE}x")
+    print(f"  • Channel alpha: {CHANNEL_ALPHA}")
     print(f"  • Nodes CSV: {nodes_csv}")
     print(f"  • Edges CSV: {edges_csv}")
     print(f"  • Debug PNG: {dbg_path}")
