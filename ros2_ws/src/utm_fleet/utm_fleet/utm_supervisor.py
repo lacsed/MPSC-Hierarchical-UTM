@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import threading
 import time
@@ -17,6 +18,7 @@ from std_msgs.msg import String
 from utm_graph import load_graph_data
 from utm_interfaces.srv import RequestEvent
 from ultrades.automata import *
+from .sim_metrics import CSVMetricLogger
 
 
 _RE_SUFFIX = re.compile(r"^(.*)_(\d+)$")
@@ -398,6 +400,45 @@ class UTMSupervisorNode(Node):
         self.task_counter = 0
         self.task_queue = deque()
 
+        self.baseline = os.environ.get("UTM_BASELINE", "proposed").strip().lower()
+        self.run_id = os.environ.get("UTM_RUN_ID", "").strip()
+        self.scenario_id = os.environ.get("UTM_SCENARIO", "default").strip()
+        self.graph_size = os.environ.get("UTM_GRAPH_SIZE", "current").strip()
+        self.density = os.environ.get("UTM_DENSITY", "medium").strip()
+        self.seed = os.environ.get("UTM_SEED", "").strip()
+        self.num_uavs = int(os.environ.get("UTM_UAVS", "0") or 0)
+        self.num_nodes = int(len(self.model.G.nodes()))
+        self.num_edges = int(len(self.model.G.edges()))
+        self.request_count = 0
+
+        self.metric_logger = CSVMetricLogger(
+            "utm_supervisor.csv",
+            [
+                "t_wall",
+                "run_id",
+                "scenario_id",
+                "baseline",
+                "graph_size",
+                "density",
+                "seed",
+                "num_uavs",
+                "num_nodes",
+                "num_edges",
+                "record_type",
+                "request_count",
+                "agent_id",
+                "event",
+                "accepted",
+                "reason",
+                "request_runtime_ms",
+                "forbidden_count",
+                "edge_owner_count",
+                "vertex_owner_count",
+                "blocked_count",
+                "pending_grant_count",
+            ],
+        )
+
         qos = rclpy.qos.QoSProfile(depth=100)
 
         self.srv_request = self.create_service(
@@ -630,9 +671,53 @@ class UTMSupervisorNode(Node):
         out.update(self._get_runtime_forbidden())
         return out
 
+    def _write_metric(
+        self,
+        record_type: str,
+        agent_id: str = "",
+        event: str = "",
+        accepted="",
+        reason: str = "",
+        request_runtime_ms="",
+        forbidden_count=None,
+    ):
+        try:
+            if forbidden_count is None:
+                forbidden_count = len(self._get_forbidden())
+
+            self.metric_logger.write(
+                run_id=str(self.run_id),
+                scenario_id=str(self.scenario_id),
+                baseline=str(self.baseline),
+                graph_size=str(self.graph_size),
+                density=str(self.density),
+                seed=str(self.seed),
+                num_uavs=int(self.num_uavs),
+                num_nodes=int(self.num_nodes),
+                num_edges=int(self.num_edges),
+                record_type=str(record_type),
+                request_count=int(self.request_count),
+                agent_id=str(agent_id),
+                event=str(event),
+                accepted=accepted,
+                reason=str(reason),
+                request_runtime_ms=request_runtime_ms,
+                forbidden_count=int(forbidden_count),
+                edge_owner_count=int(len(self.edge_owner)),
+                vertex_owner_count=int(len(self.vertex_owner)),
+                blocked_count=int(len(self.blocked_vertices)),
+                pending_grant_count=int(len(self.pending_grant)),
+            )
+        except Exception:
+            pass
+
     def _publish_prohibited(self):
         disabled = sorted(self._get_forbidden())
         self.pub_prohibited.publish(String(data=",".join(disabled)))
+        self._write_metric(
+            record_type="prohibited_broadcast",
+            forbidden_count=len(disabled),
+        )
 
     def _publish_occupancy(self):
         self._sanitize()
@@ -693,40 +778,45 @@ class UTMSupervisorNode(Node):
             self._publish_prohibited()
             self._publish_occupancy()
 
+
     def _on_request_event(self, req, resp):
+        t0 = time.perf_counter()
         raw = str(req.event or "").strip()
         ev_name, parsed_agent = self._parse_event(raw)
         agent_id = str(req.agent_id or parsed_agent or "").strip()
+
+        def _finish(accepted: bool, reason: str):
+            resp.accepted = bool(accepted)
+            resp.reason = str(reason)
+            resp.prohibited_events = sorted(self._get_forbidden())
+            self.request_count += 1
+            self._write_metric(
+                record_type="request_event",
+                agent_id=str(agent_id),
+                event=str(ev_name),
+                accepted=int(bool(accepted)),
+                reason=str(reason),
+                request_runtime_ms=1000.0 * (time.perf_counter() - t0),
+                forbidden_count=len(resp.prohibited_events),
+            )
+            return resp
 
         with self.lock:
             self._cleanup_stale_grants()
 
             if not agent_id:
-                resp.accepted = False
-                resp.reason = "missing agent_id"
-                resp.prohibited_events = sorted(self._get_forbidden())
-                return resp
+                return _finish(False, "missing agent_id")
 
             if bool(req.cancel):
                 ok, reason = self._cancel_grant(agent_id, ev_name)
-                resp.accepted = ok
-                resp.reason = reason
-                resp.prohibited_events = sorted(self._get_forbidden())
                 self._publish_prohibited()
                 self._publish_occupancy()
-                return resp
+                return _finish(ok, reason)
 
             if not ev_name.startswith("edge_take::"):
-                resp.accepted = True
-                resp.reason = "non-edge-take event accepted"
-                resp.prohibited_events = sorted(self._get_forbidden())
-                return resp
+                return _finish(True, "non-edge-take event accepted")
 
             ok, reason = self._grant_edge_take(agent_id, ev_name)
-
-            resp.accepted = ok
-            resp.reason = reason
-            resp.prohibited_events = sorted(self._get_forbidden())
 
             self._publish_prohibited()
             self._publish_occupancy()
@@ -736,7 +826,7 @@ class UTMSupervisorNode(Node):
             else:
                 self.get_logger().warn(f"REJECT {ev_name}_{agent_id}: {reason}")
 
-            return resp
+            return _finish(ok, reason)
 
     def _grant_edge_take(self, agent_id, ev_name):
         edge = self._edge_from_take(ev_name)

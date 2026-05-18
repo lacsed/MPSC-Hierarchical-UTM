@@ -19,6 +19,8 @@ logger = logging.getLogger("gen_world_from_image_gz")
 
 OVERFLIGHT_MARGIN_M = 2.0
 LOGICAL_ABOVE_TALLEST = 5.0
+LOGICAL_LAYER_STEP_M = 5.0
+DRONES_PER_EXTRA_LOGICAL_LAYER = 3
 
 UAV_SCALE = 2.0
 CHANNEL_ALPHA = 0.18
@@ -59,6 +61,41 @@ def rgba_text(rgba):
 
 def safe_name(name):
     return "".join(ch if ch.isalnum() or ch in ["_", "-"] else "_" for ch in str(name))
+
+
+def logical_extra_layer_count(num_vehicles, drones_per_layer=DRONES_PER_EXTRA_LOGICAL_LAYER):
+    """
+    Return the number of extra logical layers required by the fleet size.
+
+    The base logical layer always exists. For every complete group of
+    `drones_per_layer` UAVs, one extra logical layer is created above it.
+    Examples with the default value 3:
+        1--2 UAVs -> 0 extra layers
+        3--5 UAVs -> 1 extra layer
+        6--8 UAVs -> 2 extra layers
+    """
+    if drones_per_layer <= 0:
+        raise ValueError("drones_per_layer must be positive")
+    return max(0, int(num_vehicles) // int(drones_per_layer))
+
+
+def logical_layer_count(num_vehicles):
+    """Return total logical layers, including the base layer."""
+    return 1 + logical_extra_layer_count(num_vehicles)
+
+
+def logical_node_id(layer_idx, node_idx, nodes_per_layer):
+    """
+    Build a globally sequential logical-node identifier.
+
+    All logical nodes use the same naming pattern LOGICAL_000, LOGICAL_001, ... .
+    The global index is computed in layer-major order, so layer 0 occupies
+    indices 0..M-1, layer 1 occupies M..2M-1, and so on.
+    """
+    if int(nodes_per_layer) <= 0:
+        raise ValueError("nodes_per_layer must be positive")
+    global_idx = int(layer_idx) * int(nodes_per_layer) + int(node_idx)
+    return f"LOGICAL_{global_idx:03d}"
 
 
 def cylinder_pose_between_points(x1, y1, z1, x2, y2, z2):
@@ -586,15 +623,39 @@ def main(
     node_rows = []
     edge_rows = []
 
+    num_logical_layers = logical_layer_count(num_vehicles)
+    num_extra_logical_layers = num_logical_layers - 1
+    logical_layer_z = [
+        float(z_logical_final) + layer_idx * float(LOGICAL_LAYER_STEP_M)
+        for layer_idx in range(num_logical_layers)
+    ]
+    num_base_logical_nodes = len(best_selected)
+
+    logger.info(
+        f"Logical layers: total={num_logical_layers} "
+        f"(base + {num_extra_logical_layers} extra), "
+        f"step={LOGICAL_LAYER_STEP_M:.2f}m, "
+        f"z_min={logical_layer_z[0]:.2f}m, z_max={logical_layer_z[-1]:.2f}m"
+    )
+
+    # Logical-node IDs are globally sequential across all layers:
+    # layer 0 -> LOGICAL_000 ... LOGICAL_{M-1};
+    # layer 1 -> LOGICAL_M ... LOGICAL_{2M-1}; etc.
+    # Upper layers replicate the same x,y coordinates and increase z by 5 m per layer.
     logical_nodes_world = []
+    logical_layer_id_by_sid = {layer_idx: {} for layer_idx in range(num_logical_layers)}
+
     for i, sid in enumerate(best_selected):
         px, py = pos_skel_ref[sid]
         xw, yw = city.px_to_world(px, py, W, H, resolution_m_per_px)
-        nid = f"LOGICAL_{i:03d}"
-        node_rows.append((nid, "logical", xw, yw, float(z_logical_final)))
-        logical_nodes_world.append((sid, nid, xw, yw))
+        logical_nodes_world.append((sid, i, xw, yw))
 
-    sid_to_logical_id = {sid: nid for sid, nid, _, _ in logical_nodes_world}
+        for layer_idx, z_layer in enumerate(logical_layer_z):
+            nid = logical_node_id(layer_idx, i, num_base_logical_nodes)
+            node_rows.append((nid, "logical", xw, yw, float(z_layer)))
+            logical_layer_id_by_sid[layer_idx][sid] = nid
+
+    sid_to_logical_id = logical_layer_id_by_sid[0]
 
     vertiports_world = []
     for sp in specials:
@@ -606,14 +667,23 @@ def main(
         if sp["role"] == "vertiport":
             vertiports_world.append({"id": sp["id"], "x": xw, "y": yw, "z": sp_z})
 
+    # Special nodes connect only to the base logical layer.
     for sp in specials:
         s_id = sp["id"]
         for sid_k in best_assignment[s_id]:
             lk = sid_to_logical_id[sid_k]
             edge_rows.append((s_id, lk))
 
-    for (i, j) in best_ll_tree:
-        edge_rows.append((f"LOGICAL_{i:03d}", f"LOGICAL_{j:03d}"))
+    # Each logical layer reproduces the same logical-logical topology.
+    for layer_idx in range(num_logical_layers):
+        for (i, j) in best_ll_tree:
+            edge_rows.append((logical_node_id(layer_idx, i, num_base_logical_nodes), logical_node_id(layer_idx, j, num_base_logical_nodes)))
+
+    # Upper logical nodes connect only to their corresponding node in the layer below.
+    # This creates vertical inter-layer channels with identical x,y and z separated by 5 m.
+    for layer_idx in range(1, num_logical_layers):
+        for i, _sid in enumerate(best_selected):
+            edge_rows.append((logical_node_id(layer_idx, i, num_base_logical_nodes), logical_node_id(layer_idx - 1, i, num_base_logical_nodes)))
 
     vehicles = city.distribute_vehicles_over_vertiports(
         num_vehicles, vertiports_world, z_vehicle_above_vertiport=float(z_vehicle)
@@ -648,8 +718,9 @@ def main(
     for i, sid in enumerate(best_selected):
         px, py = pos_skel_ref[sid]
         xw, yw = city.px_to_world(px, py, W, H, resolution_m_per_px)
-        nid = f"LOGICAL_{i:03d}"
-        node_pos[nid] = (float(xw), float(yw), float(z_logical_final))
+        for layer_idx, z_layer in enumerate(logical_layer_z):
+            nid = logical_node_id(layer_idx, i, num_base_logical_nodes)
+            node_pos[nid] = (float(xw), float(yw), float(z_layer))
 
     for sp in specials:
         bi = sp["bi"]
@@ -731,7 +802,10 @@ def main(
     print(f"  • Output dir: {os.path.abspath(out_dir)}")
     print(f"  • Buildings: {len(boxes)} (special={len(roles_by_index)})")
     print(f"  • Tallest building: {tallest:.2f} m")
-    print(f"  • Logical nodes Z: {z_logical_final:.2f} m (tallest + {LOGICAL_ABOVE_TALLEST})")
+    print(f"  • Logical base Z: {logical_layer_z[0]:.2f} m (tallest + {LOGICAL_ABOVE_TALLEST})")
+    print(f"  • Logical layers: {num_logical_layers} total = 1 base + {num_extra_logical_layers} extra")
+    print(f"  • Logical layer vertical step: {LOGICAL_LAYER_STEP_M:.2f} m")
+    print(f"  • Logical top Z: {logical_layer_z[-1]:.2f} m")
     print(f"  • Logical node spheres in Gazebo: OFF")
     print(f"  • UAV model names preserved: VEHICLE_000, VEHICLE_001, ...")
     print(f"  • UAV scale: {UAV_SCALE}x")

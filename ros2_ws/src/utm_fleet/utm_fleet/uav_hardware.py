@@ -297,38 +297,65 @@ class UAVHardware:
             return False
 
         ux, uy, uz = self._pos_xyz(u)
+        ux = float(ux)
+        uy = float(uy)
+        uz = float(uz)
 
         if self.snap_on_move:
-            self.x = float(ux)
-            self.y = float(uy)
+            self.x = ux
+            self.y = uy
         else:
-            dist = math.hypot(self.x - float(ux), self.y - float(uy))
-            if dist > max(self.tol, 0.35):
+            # Use horizontal tolerance for deciding whether the UAV is located
+            # at the source vertex. This keeps the check compatible with
+            # graph nodes that differ only by altitude.
+            dist_xy = math.hypot(self.x - ux, self.y - uy)
+            if dist_xy > max(self.tol, 0.35):
                 return False
 
         bx, by, bz = self._pos_xyz(v)
-        edge_len = math.hypot(float(bx) - float(ux), float(by) - float(uy))
-        if edge_len <= 1e-9:
+        bx = float(bx)
+        by = float(by)
+        bz = float(bz)
+
+        dx = bx - ux
+        dy = by - uy
+        dz = bz - uz
+
+        edge_len_xy = math.hypot(dx, dy)
+        edge_len_3d = math.sqrt(dx * dx + dy * dy + dz * dz)
+
+        # IMPORTANT:
+        # The previous implementation used only the horizontal distance
+        # math.hypot(dx, dy). Therefore, vertical or same-(x,y) inter-layer
+        # edges were rejected as zero-length edges. This made the MPSC/UTM
+        # select free higher-altitude edges, receive a grant, and then fail at
+        # the hardware layer, producing apparent gridlock at the vertex.
+        if edge_len_3d <= 1e-9:
             return False
 
         self.edge_u = u
         self.edge_v = v
 
-        self._ax = float(ux)
-        self._ay = float(uy)
-        self._az = float(uz)
+        self._ax = ux
+        self._ay = uy
+        self._az = uz
 
-        self._bx = float(bx)
-        self._by = float(by)
-        self._bz = float(bz)
+        self._bx = bx
+        self._by = by
+        self._bz = bz
 
-        self.edge_len = float(edge_len)
+        self.edge_len = float(edge_len_3d)
+        self.edge_len_xy = float(edge_len_xy)
+        self.edge_dz = float(dz)
         self.edge_s = 0.0
         self._v_cmd = 0.0
 
         self.mode = "MOVING"
         self.current_node = u
-        self.z = max(self.z, self._az + self.clearance + self.alt_offset)
+
+        # Start exactly at the graph altitude of the source node. This is
+        # required for smooth vertical/inter-layer transitions.
+        self.z = uz + self.clearance + self.alt_offset
 
         # Force one immediate pose update at the start of motion.
         self.send_pose(force=True)
@@ -480,7 +507,17 @@ class UAVHardware:
     def _move_step(self, dt):
         old_edge_len = float(self.edge_len)
 
-        v_des = self.speed
+        # Bound the path-progress speed by both the horizontal cruise speed
+        # and the configured vertical speed.  For a purely vertical edge this
+        # makes the vehicle climb/descend at vspeed instead of the horizontal
+        # cruise speed.
+        dz_total = abs(float(self._bz) - float(self._az))
+        if dz_total > 1e-9:
+            v_z_limited = self.vspeed * max(float(self.edge_len), 1e-9) / dz_total
+            v_des = min(float(self.speed), float(v_z_limited))
+        else:
+            v_des = float(self.speed)
+
         self._v_cmd = move_towards(self._v_cmd, v_des, self.accel * dt)
 
         ds = (self._v_cmd * dt) / max(1e-9, self.edge_len)
@@ -490,22 +527,31 @@ class UAVHardware:
         self.x = self._ax + self.edge_s * (self._bx - self._ax)
         self.y = self._ay + self.edge_s * (self._by - self._ay)
 
-        yaw_des = math.atan2(self._by - self._ay, self._bx - self._ax)
-        dyaw = yaw_des - self.yaw
+        # For purely vertical/inter-layer edges, dx=dy=0 and the yaw is
+        # undefined. Keep the previous yaw instead of forcing atan2(0,0).
+        dx = self._bx - self._ax
+        dy = self._by - self._ay
+        if math.hypot(dx, dy) > 1e-9:
+            yaw_des = math.atan2(dy, dx)
+            dyaw = yaw_des - self.yaw
 
-        while dyaw > math.pi:
-            dyaw -= 2.0 * math.pi
-        while dyaw < -math.pi:
-            dyaw += 2.0 * math.pi
+            while dyaw > math.pi:
+                dyaw -= 2.0 * math.pi
+            while dyaw < -math.pi:
+                dyaw += 2.0 * math.pi
 
-        max_dyaw = self.yaw_rate_max * dt
-        yaw_step = sat(dyaw, -max_dyaw, max_dyaw)
-        yaw_rate = yaw_step / max(1e-6, dt)
-        self.yaw += yaw_step
+            max_dyaw = self.yaw_rate_max * dt
+            yaw_step = sat(dyaw, -max_dyaw, max_dyaw)
+            yaw_rate = yaw_step / max(1e-6, dt)
+            self.yaw += yaw_step
+        else:
+            yaw_rate = 0.0
 
+        # Interpolate altitude directly along the selected 3D graph edge.
+        # This avoids rejecting or visually stalling same-(x,y) inter-layer
+        # edges. The graph edge itself defines the admissible vertical motion.
         z_ref = self._az + self.edge_s * (self._bz - self._az)
-        z_tgt = float(z_ref) + self.clearance + self.alt_offset
-        self.z = move_towards(self.z, z_tgt, self.vspeed * dt)
+        self.z = float(z_ref) + self.clearance + self.alt_offset
 
         v_meas = (old_edge_len * (self.edge_s - s0)) / max(1e-6, dt)
 
@@ -521,6 +567,8 @@ class UAVHardware:
             self.edge_u = None
             self.edge_v = None
             self.edge_len = 0.0
+            self.edge_len_xy = 0.0
+            self.edge_dz = 0.0
             self.edge_s = 0.0
             self._v_cmd = 0.0
             self.mode = "IDLE"
