@@ -1,18 +1,13 @@
-# ============================================================
-# ROS 2 / colcon (generated build artifacts)
-# ============================================================
+# ROS 2 / colcon generated artifacts
 ros2_ws/build/
 ros2_ws/install/
 ros2_ws/log/
 
-# If you ever build outside ros2_ws
 build/
 install/
 log/
 
-# ============================================================
-# Python (bytecode, caches, venvs)
-# ============================================================
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -29,24 +24,24 @@ ENV/
 coverage.xml
 htmlcov/
 
-# ============================================================
 # Editors / IDEs
-# ============================================================
-.vscode/*
+.vscode/
 .idea/
 *.swp
 *.swo
-*.vscode
-# ============================================================
+
 # OS junk
-# ============================================================
 .DS_Store
 Thumbs.db
 
-# ============================================================
-# Gazebo / simulation runtime junk inside repo
-# (only patterns that could appear INSIDE the repo)
-# ============================================================
+# VS Code database/cache files
+*.db
+*.db-shm
+*.db-wal
+*.db-*
+ipch/
+
+# Gazebo / simulation runtime junk
 **/*.log
 **/*.log.*
 **/*.core
@@ -58,24 +53,10 @@ core.*
 **/*.bag.active
 **/*.bag.metadata.yaml
 
-# ============================================================
-# Generated simulation outputs (keep world + graph, ignore debug)
-# ============================================================
-# We KEEP:
-# - scripts/gz_world_out/utm_world.sdf
-# - scripts/gz_world_out/graph_nodes.csv
-# - scripts/gz_world_out/graph_edges.csv
-# - scripts/gz_world_out/materials/**
-# - scripts/gz_world_out/*.png needed by world/materials (finalmap.png, heightmap.png, masks)
-
-# Ignore only debug visuals that are safe to regenerate
+# Generated debug outputs
 scripts/gz_world_out/graph_debug*.png
 
-# ============================================================
 # Media outputs
-# ============================================================
 *.mp4
 *.avi
 *.mov
-*.png
-*.db

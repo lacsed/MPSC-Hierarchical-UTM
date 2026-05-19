@@ -1,5 +1,8 @@
 import math
+<<<<<<< HEAD
 import time
+=======
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
 from dataclasses import dataclass
 
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist
@@ -85,6 +88,7 @@ class UAVHardware:
         snap_on_move=True,
         local_event_callback=None,
         battery_log_period_s=0.0,
+<<<<<<< HEAD
 
         # Gazebo pose-update protection.
         # This prevents visual flickering caused by flooding
@@ -92,6 +96,8 @@ class UAVHardware:
         pose_rate_hz=10.0,
         pose_precision=4,
         resend_idle_pose_s=1.0,
+=======
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
     ):
         self.node = node
         self.entity_name = str(entity_name)
@@ -122,8 +128,11 @@ class UAVHardware:
         self._last_batt_ts = self._now()
         self._battery_log_period_s = float(battery_log_period_s)
         self._last_battery_log_ts = self._last_batt_ts
+<<<<<<< HEAD
         self._skip_battery_update_once = False
         self.vertiport_nodes = set()
+=======
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
 
         self.ground_z = float(ground_z)
         self.g = float(g_mps2)
@@ -167,6 +176,7 @@ class UAVHardware:
         self._action_duration_s = 0.0
         self._action_end_event_base = None
 
+<<<<<<< HEAD
         # --------------------------------------------------------------
         # Gazebo SetEntityState back-pressure
         # --------------------------------------------------------------
@@ -181,6 +191,8 @@ class UAVHardware:
         self._last_sent_pose_key = None
         self._last_pose_error_log_wall_s = -1e30
 
+=======
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
     # ------------------------------------------------------------------
     # public status API
     # ------------------------------------------------------------------
@@ -197,15 +209,19 @@ class UAVHardware:
     def current_node_id(self):
         return self.current_node
 
+<<<<<<< HEAD
     def _is_vertiport_node(self, node_id):
         node_id = str(node_id)
         return node_id in getattr(self, "vertiport_nodes", set()) or "VERTIPORT" in node_id.upper()
 
+=======
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
     def restore_full_battery(self):
         self.soc = 1.0
         self._low_batt_sent = False
         self._last_batt_ts = self._now()
 
+<<<<<<< HEAD
     def send_pose(self, force=False):
         """
         Send UAV pose to Gazebo with throttling and back-pressure.
@@ -261,6 +277,9 @@ class UAVHardware:
         if not force and (now_wall - self._last_pose_wall_s) < self._pose_period_wall_s:
             return
 
+=======
+    def send_pose(self):
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
         pose = Pose()
         pose.position = Point(
             x=float(self.x),
@@ -277,10 +296,14 @@ class UAVHardware:
 
         req = SetEntityState.Request()
         req.state = state
+<<<<<<< HEAD
 
         self._pose_future = self.cli_set.call_async(req)
         self._last_pose_wall_s = now_wall
         self._last_sent_pose_key = pose_key
+=======
+        self.cli_set.call_async(req)
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
 
     # ------------------------------------------------------------------
     # public action API
@@ -297,6 +320,7 @@ class UAVHardware:
             return False
 
         ux, uy, uz = self._pos_xyz(u)
+<<<<<<< HEAD
         ux = float(ux)
         uy = float(uy)
         uz = float(uz)
@@ -331,11 +355,26 @@ class UAVHardware:
         # select free higher-altitude edges, receive a grant, and then fail at
         # the hardware layer, producing apparent gridlock at the vertex.
         if edge_len_3d <= 1e-9:
+=======
+
+        if self.snap_on_move:
+            self.x = float(ux)
+            self.y = float(uy)
+        else:
+            dist = math.hypot(self.x - float(ux), self.y - float(uy))
+            if dist > max(self.tol, 0.35):
+                return False
+
+        bx, by, bz = self._pos_xyz(v)
+        edge_len = math.hypot(float(bx) - float(ux), float(by) - float(uy))
+        if edge_len <= 1e-9:
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
             return False
 
         self.edge_u = u
         self.edge_v = v
 
+<<<<<<< HEAD
         self._ax = ux
         self._ay = uy
         self._az = uz
@@ -347,11 +386,23 @@ class UAVHardware:
         self.edge_len = float(edge_len_3d)
         self.edge_len_xy = float(edge_len_xy)
         self.edge_dz = float(dz)
+=======
+        self._ax = float(ux)
+        self._ay = float(uy)
+        self._az = float(uz)
+
+        self._bx = float(bx)
+        self._by = float(by)
+        self._bz = float(bz)
+
+        self.edge_len = float(edge_len)
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
         self.edge_s = 0.0
         self._v_cmd = 0.0
 
         self.mode = "MOVING"
         self.current_node = u
+<<<<<<< HEAD
 
         # Start exactly at the graph altitude of the source node. This is
         # required for smooth vertical/inter-layer transitions.
@@ -359,6 +410,9 @@ class UAVHardware:
 
         # Force one immediate pose update at the start of motion.
         self.send_pose(force=True)
+=======
+        self.z = max(self.z, self._az + self.clearance + self.alt_offset)
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
         return True
 
     def start_pick(self, provider_node):
@@ -416,12 +470,16 @@ class UAVHardware:
 
         if self.mode == "MOVING":
             v_meas, yaw_rate = self._move_step(dt)
+<<<<<<< HEAD
 
             if getattr(self, "_skip_battery_update_once", False):
                 self._skip_battery_update_once = False
             else:
                 self._battery_update(v_meas, yaw_rate, now)
 
+=======
+            self._battery_update(v_meas, yaw_rate, now)
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
             self._check_battery_empty()
             self._battery_maybe_log(now)
             return
@@ -466,11 +524,14 @@ class UAVHardware:
                 z_tgt = float(nz) + self.clearance + self.alt_offset
                 self.z = move_towards(self.z, z_tgt, self.vspeed * dt)
 
+<<<<<<< HEAD
             if self._is_vertiport_node(self.current_node):
                 self.restore_full_battery()
                 self._battery_maybe_log(now)
                 return
 
+=======
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
             self._battery_update(0.0, 0.0, now)
             self._check_battery_empty()
             self._battery_maybe_log(now)
@@ -505,6 +566,7 @@ class UAVHardware:
     # ------------------------------------------------------------------
 
     def _move_step(self, dt):
+<<<<<<< HEAD
         old_edge_len = float(self.edge_len)
 
         # Bound the path-progress speed by both the horizontal cruise speed
@@ -518,6 +580,9 @@ class UAVHardware:
         else:
             v_des = float(self.speed)
 
+=======
+        v_des = self.speed
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
         self._v_cmd = move_towards(self._v_cmd, v_des, self.accel * dt)
 
         ds = (self._v_cmd * dt) / max(1e-9, self.edge_len)
@@ -527,6 +592,7 @@ class UAVHardware:
         self.x = self._ax + self.edge_s * (self._bx - self._ax)
         self.y = self._ay + self.edge_s * (self._by - self._ay)
 
+<<<<<<< HEAD
         # For purely vertical/inter-layer edges, dx=dy=0 and the yaw is
         # undefined. Keep the previous yaw instead of forcing atan2(0,0).
         dx = self._bx - self._ax
@@ -554,11 +620,32 @@ class UAVHardware:
         self.z = float(z_ref) + self.clearance + self.alt_offset
 
         v_meas = (old_edge_len * (self.edge_s - s0)) / max(1e-6, dt)
+=======
+        yaw_des = math.atan2(self._by - self._ay, self._bx - self._ax)
+        dyaw = yaw_des - self.yaw
+
+        while dyaw > math.pi:
+            dyaw -= 2.0 * math.pi
+        while dyaw < -math.pi:
+            dyaw += 2.0 * math.pi
+
+        max_dyaw = self.yaw_rate_max * dt
+        yaw_step = sat(dyaw, -max_dyaw, max_dyaw)
+        yaw_rate = yaw_step / max(1e-6, dt)
+        self.yaw += yaw_step
+
+        z_ref = self._az + self.edge_s * (self._bz - self._az)
+        z_tgt = float(z_ref) + self.clearance + self.alt_offset
+        self.z = move_towards(self.z, z_tgt, self.vspeed * dt)
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
 
         if self.edge_s >= 1.0 - 1e-9:
             self.x = float(self._bx)
             self.y = float(self._by)
+<<<<<<< HEAD
             self.z = float(self._bz) + self.clearance + self.alt_offset
+=======
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
             self.current_node = self.edge_v
 
             u = self.edge_u
@@ -567,12 +654,16 @@ class UAVHardware:
             self.edge_u = None
             self.edge_v = None
             self.edge_len = 0.0
+<<<<<<< HEAD
             self.edge_len_xy = 0.0
             self.edge_dz = 0.0
+=======
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
             self.edge_s = 0.0
             self._v_cmd = 0.0
             self.mode = "IDLE"
 
+<<<<<<< HEAD
             if self._is_vertiport_node(v):
                 self.restore_full_battery()
                 self._skip_battery_update_once = True
@@ -581,6 +672,11 @@ class UAVHardware:
             self.send_pose(force=True)
             self._emit_uncontrollable(f"edge_release::{u}::{v}")
 
+=======
+            self._emit_uncontrollable(f"edge_release::{u}::{v}")
+
+        v_meas = (self.edge_len * (self.edge_s - s0)) / max(1e-6, dt)
+>>>>>>> 5adce261dd757e3d93e0c03c34300c7fe91ec966
         return v_meas, yaw_rate
 
     # ------------------------------------------------------------------
