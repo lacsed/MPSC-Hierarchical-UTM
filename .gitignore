@@ -77,3 +77,5 @@ scripts/gz_world_out/graph_debug*.png
 *.mp4
 *.avi
 *.mov
+*.png
+*.db
