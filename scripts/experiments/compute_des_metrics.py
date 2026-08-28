@@ -549,6 +549,7 @@ def compute_metrics(
         "utm_supervisor_transitions": tr_utm,
         "hierarchical_state_count": hierarchical_states,
         "hierarchical_transition_count": hierarchical_transitions,
+        "hierarchical_total_construction_and_synthesis_time_s":  t_build0-t_all0,
         "centralized_exact_plants": len(centralized_plants),
         "centralized_exact_specs": len(centralized_specs),
         "centralized_exact_event_count": len(registry),
